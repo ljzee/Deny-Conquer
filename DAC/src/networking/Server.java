@@ -12,8 +12,8 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 
-import game.Test;
-import game.TestPane;
+import game.Model;
+import game.Grid;
 
 /**
 * Written by Martin Ombura Jr. <@martinomburajr>
@@ -47,7 +47,7 @@ public class Server {
 		    ArrayList<String> commands = new ArrayList<String>();
 		    
             
-            Test t = new Test(Color.BLUE);
+            Model t = new Model(Color.BLUE);
 
             while(!done) {
                 Object command = null;

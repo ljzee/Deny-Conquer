@@ -10,9 +10,9 @@ import javax.swing.border.MatteBorder;
 
 import game.CellPane;
 
-public class TestPane extends JPanel {
+public class Grid extends JPanel {
 
-    public TestPane(Color color) {
+    public Grid(Color color) {
         setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();

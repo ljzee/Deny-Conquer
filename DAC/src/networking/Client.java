@@ -11,7 +11,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import command.PollGameDataCommand;
-import game.Test;
+import game.Model;
 
 public class Client {
 	public static void main(String args[]) {
@@ -33,7 +33,7 @@ public class Client {
 		        new BufferedReader(
 		            new InputStreamReader(System.in));
 		    
-		    Test t = new Test(Color.RED);
+		    Model t = new Model(Color.RED);
 		    
 		    String userInput;
 
