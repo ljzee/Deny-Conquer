@@ -1,4 +1,4 @@
-package game;
+package game.demos;
 
 import javax.swing.*;
 public class PaintBrush extends JFrame
@@ -15,5 +15,6 @@ public class PaintBrush extends JFrame
  public static void main(String args[])
 {
        PaintBrush pbrush=new PaintBrush();
+       MyPanel p = new MyPanel();
 }
 }
