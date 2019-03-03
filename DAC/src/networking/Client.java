@@ -33,7 +33,10 @@ public class Client {
 		        new BufferedReader(
 		            new InputStreamReader(System.in));
 		    
-		    Model t = new Model(Color.RED);
+		    //Blocks until server starts a game session in which colors will be assigned to all players, server blocks if not enough connections
+		    Color assignedColor = (Color)in.readObject();
+		    
+		    Model t = new Model(assignedColor);
 		    
 		    String userInput;
 
