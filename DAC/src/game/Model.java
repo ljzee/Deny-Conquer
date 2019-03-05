@@ -23,7 +23,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 
-import command.PollGameDataCommand;
+import command.Command;
+import command.PollGameDataCommandResponse;
+import command.UpdateCellColorCommand;
 
 public class Model {
 	
@@ -53,33 +55,24 @@ public class Model {
 		       
     }
     
-    public ArrayList<String> getBlueCells() {
-		ArrayList<String> blueCells = new ArrayList<String>();
+    public ArrayList<Command> getBlueCells() {
+		ArrayList<Command> updatedCells = new ArrayList<Command>();
 		
 		Component[] cells = (Component[])grid.getComponents();
-		
-		StringBuilder cellLocationCommand = new StringBuilder();
 		
 		for(Component c : cells) {
 			CellPane cell = (CellPane)c;
 			if(cell.getStatus() != 0) {
-				cellLocationCommand.append("Color ");
-				
-				cellLocationCommand.append(cell.getLocation().x);
-				cellLocationCommand.append(" ");
-				cellLocationCommand.append(cell.getLocation().y);
-				blueCells.add(cellLocationCommand.toString());
-				
+				UpdateCellColorCommand command = new UpdateCellColorCommand(cell.getLocation().x, cell.getLocation().y);
+				updatedCells.add(command);
 				cell.clearStatus();
-				
-				cellLocationCommand.setLength(0);
 			}
 		}
-		return blueCells;
+		return updatedCells;
 	}
     
-    public ArrayList<PollGameDataCommand> pollGameData() {
-		ArrayList<PollGameDataCommand> gameData = new ArrayList<PollGameDataCommand>();
+    public ArrayList<PollGameDataCommandResponse> pollGameData() {
+		ArrayList<PollGameDataCommandResponse> gameData = new ArrayList<PollGameDataCommandResponse>();
 		
 		Component[] cells = (Component[])grid.getComponents();
 		
@@ -90,7 +83,7 @@ public class Model {
 			int y = cell.getLocation().y;
 			Color color = cell.getBackground();
 
-			gameData.add(new PollGameDataCommand(x,y,color));
+			gameData.add(new PollGameDataCommandResponse(x,y,color));
 		}
 		return gameData;
 	}

@@ -10,7 +10,9 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import command.Command;
 import command.PollGameDataCommand;
+import command.PollGameDataCommandResponse;
 import game.Model;
 
 public class Client {
@@ -40,22 +42,22 @@ public class Client {
 		    
 		    String userInput;
 
-		    ArrayList<String> commands = new ArrayList<String>();
+		    ArrayList<Command> commands = new ArrayList<Command>();
 		    
 		    while(true) {
 		    	commands = t.getBlueCells();
 		    	if(!commands.isEmpty()) {
-		    		for(String command : commands) {
+		    		for(Command command : commands) {
 		    			out.writeObject(command);
-		    			System.out.println((String)in.readObject());
+		    			in.readObject();
 		    		}
 		    	}
 		    	
-		    	out.writeObject("Poll");
-		    	ArrayList<PollGameDataCommand> response = (ArrayList<PollGameDataCommand>)in.readObject();
+		    	out.writeObject(new PollGameDataCommand());
+		    	ArrayList<PollGameDataCommandResponse> response = (ArrayList<PollGameDataCommandResponse>)in.readObject();
 		    	
-		    	for(PollGameDataCommand command : response) {
-		    		t.getGrid().getComponentAt(command.getX(), command.getY()).setBackground(command.getColor());;
+		    	for(PollGameDataCommandResponse command : response) {
+		    		t.getGrid().getComponentAt(command.getX(), command.getY()).setBackground(command.getColor());
 		    	}
 //		    	
 //		    	if(response.startsWith("Color ")) {

@@ -6,13 +6,18 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 
+import command.Command;
+import command.PollGameDataCommand;
+import command.UpdateCellColorCommand;
 import game.Model;
 import game.Grid;
 
@@ -29,6 +34,8 @@ public class Server {
 	
 	ArrayList<Color> unusedColors;
 	ArrayList<Color> usedColors;
+	
+	ConcurrentLinkedQueue<Command> commandQueue = new ConcurrentLinkedQueue<Command>();
 	
 	public Server(int port) {
 		this.connections = new ArrayList<ClientConnection>();
@@ -50,10 +57,11 @@ public class Server {
 	
 	public void acceptConnections(int numberOfConnections) {
 		System.out.println("Waiting for connections");
+		int i = 0;
 		while(this.connections.size() < numberOfConnections) {
 			try {
 				Socket clientSocket = socket.accept();
-				ClientConnection clientConnection = new ClientConnection(clientSocket, this);
+				ClientConnection clientConnection = new ClientConnection(clientSocket, this, i);
 				connections.add(clientConnection);
 				System.out.println("New connection: " + clientSocket.getRemoteSocketAddress().toString());
 				System.out.println("Number of connections needed: " + (numberOfConnections - this.connections.size()));
@@ -61,6 +69,7 @@ public class Server {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
+			i++;
 		}
 	}
     
@@ -87,10 +96,38 @@ public class Server {
 		beginHandlingClientCommands();
 	}
 	
+	public void processCommands() {
+		while(!commandQueue.isEmpty()) {
+			Command command = commandQueue.poll();
+			if(command instanceof UpdateCellColorCommand) {
+				UpdateCellColorCommand updateCellColorCommand = (UpdateCellColorCommand) command;
+				
+				int x = updateCellColorCommand.getX();
+			    int y = updateCellColorCommand.getY();
+			    
+			    //synchronized (this) {
+		    		//server.model.getGrid().getComponentAt(x, y).setBackground(this.playerColor);
+			    //}
+			    ClientConnection connection = connections.get(command.getConnectionID());
+			    model.getGrid().getComponentAt(x, y).setBackground(connection.playerColor);
+			    //connection.sendToClient("Successfully colored!");
+			}
+//			} else if(command instanceof PollGameDataCommand) {
+//				ClientConnection connection = connections.get(command.getConnectionID());
+//				connection.sendToClient(model.pollGameData());
+//		    }
+		}
+	}
+	
     public static void main(String[] args) {
         Server server = new Server(9991);
     	server.acceptConnections(3);
     	server.gameInit();
+    	
+    	
+    	while(true) {
+    		server.processCommands();
+    	}
     	
     }
 }
