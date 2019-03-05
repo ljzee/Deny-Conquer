@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import command.Command;
 import command.PollGameDataCommand;
@@ -39,8 +40,6 @@ public class Client {
 		    Color assignedColor = (Color)in.readObject();
 		    
 		    Model t = new Model(assignedColor);
-		    
-		    String userInput;
 
 		    ArrayList<Command> commands = new ArrayList<Command>();
 		    
@@ -59,16 +58,13 @@ public class Client {
 		    	for(PollGameDataCommandResponse command : response) {
 		    		t.getGrid().getComponentAt(command.getX(), command.getY()).setBackground(command.getColor());
 		    	}
-//		    	
-//		    	if(response.startsWith("Color ")) {
-//            	   String[] coordinates = response.trim().substring(6).split("\\s+");
-//            	   
-//            	   int x = Integer.parseInt(coordinates[0]);
-//            	   int y = Integer.parseInt(coordinates[1]);
-//            	   
-//            	   t.getGrid().getComponentAt(x, y).setBackground(Color.BLUE);
-//               }
 		    	
+	    		try {
+					TimeUnit.MILLISECONDS.sleep(10);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 		    }
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

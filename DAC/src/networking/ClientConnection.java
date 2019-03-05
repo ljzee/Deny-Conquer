@@ -76,6 +76,7 @@ public class ClientConnection extends Thread {
 			try {
 				command = (Command) this.oinstream.readObject();
 				
+				//I want to move this out, but can't figure out how
 				if(command instanceof PollGameDataCommand) {
 					synchronized(this) {
 						this.ooutstream.writeObject(server.model.pollGameData());
