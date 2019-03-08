@@ -2,6 +2,7 @@ package networking;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Point;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -16,10 +17,13 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 
+import command.ClearCellColorCommand;
 import command.Command;
 import command.PollGameDataCommand;
+import command.ScribbleCellCommand;
 import command.UpdateCellColorCommand;
 import game.Model;
+import game.CellPane;
 import game.Grid;
 
 /**
@@ -100,23 +104,41 @@ public class Server {
 	public void processCommands() {
 		while(!commandQueue.isEmpty()) {
 			Command command = commandQueue.poll();
-			if(command instanceof UpdateCellColorCommand) {
+			if(command instanceof ScribbleCellCommand) {
+				ScribbleCellCommand scribbleCellCommand = (ScribbleCellCommand) command;
+				
+				int x = scribbleCellCommand.getX();
+			    int y = scribbleCellCommand.getY();
+			    
+			    ClientConnection connection = connections.get(command.getConnectionID());
+			    
+			    CellPane cell = (CellPane) model.getGrid().getComponentAt(x, y);
+			    cell.setColor(connection.playerColor);
+			    cell.scribble(scribbleCellCommand.getPoints());
+			    System.out.println("Successfully scribbled!: x=" + scribbleCellCommand.getPoints().size() + " y=" + scribbleCellCommand.getPoints().get(0));
+			} else if(command instanceof UpdateCellColorCommand) {
 				UpdateCellColorCommand updateCellColorCommand = (UpdateCellColorCommand) command;
 				
 				int x = updateCellColorCommand.getX();
 			    int y = updateCellColorCommand.getY();
-			    
-			    //synchronized (this) {
-		    		//server.model.getGrid().getComponentAt(x, y).setBackground(this.playerColor);
-			    //}
+
 			    ClientConnection connection = connections.get(command.getConnectionID());
-			    model.getGrid().getComponentAt(x, y).setBackground(connection.playerColor);
-			    //connection.sendToClient("Successfully colored!");
+			    
+			    CellPane cell = (CellPane) model.getGrid().getComponentAt(x, y);
+			    cell.setBackground(connection.playerColor);
+			    cell.setStatus(4);
+			    System.out.println("Successfully colored!");
+			} else if(command instanceof ClearCellColorCommand) {
+				ClearCellColorCommand clearCellColorCommand = (ClearCellColorCommand) command;
+				
+				int x = clearCellColorCommand.getX();
+			    int y = clearCellColorCommand.getY();
+			    
+			    CellPane cell = (CellPane) model.getGrid().getComponentAt(x, y);
+			    cell.clearCell();
+			    cell.clearStatus();
+			    System.out.println("Successfully cleared!");
 			}
-//			} else if(command instanceof PollGameDataCommand) {
-//				ClientConnection connection = connections.get(command.getConnectionID());
-//				connection.sendToClient(model.pollGameData());
-//		    }
 		}
 	}
 	
@@ -126,15 +148,15 @@ public class Server {
     	server.gameInit();
     	
     	
-    	while(true) {
-    		server.processCommands();
-    		try {
-				TimeUnit.MILLISECONDS.sleep(10);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    	}
+//    	while(true) {
+//    		server.processCommands();
+//    		try {
+//				TimeUnit.MILLISECONDS.sleep(10);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//    	}
     	
     }
 }

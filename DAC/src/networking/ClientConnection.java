@@ -79,12 +79,13 @@ public class ClientConnection extends Thread {
 				//I want to move this out, but can't figure out how
 				if(command instanceof PollGameDataCommand) {
 					synchronized(this) {
+						server.processCommands();
 						this.ooutstream.writeObject(server.model.pollGameData());
 					}
 				} else {
-					this.ooutstream.writeObject("");
 					command.setConnectionID(connectionID);
 					server.commandQueue.add(command);
+					this.ooutstream.writeObject("");
 				}
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block

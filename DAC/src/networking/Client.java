@@ -44,7 +44,7 @@ public class Client {
 		    ArrayList<Command> commands = new ArrayList<Command>();
 		    
 		    while(true) {
-		    	commands = t.getBlueCells();
+		    	commands = t.getUpdatedState();
 		    	if(!commands.isEmpty()) {
 		    		for(Command command : commands) {
 		    			out.writeObject(command);
@@ -54,7 +54,6 @@ public class Client {
 		    	
 		    	out.writeObject(new PollGameDataCommand());
 		    	ArrayList<PollGameDataCommandResponse> response = (ArrayList<PollGameDataCommandResponse>)in.readObject();
-		    	
 		    	for(PollGameDataCommandResponse command : response) {
 		    		t.getGrid().getComponentAt(command.getX(), command.getY()).setBackground(command.getColor());
 		    	}
