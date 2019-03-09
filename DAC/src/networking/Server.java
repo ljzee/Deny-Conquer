@@ -111,9 +111,7 @@ public class Server {
 			    ClientConnection connection = connections.get(command.getConnectionID());
 			    
 			    CellPane cell = null;
-			    synchronized(this) {
-			    	cell = (CellPane) model.getGrid().getComponentAt(x, y);
-			    }
+			    cell = (CellPane) model.getGrid().getComponentAt(x, y);
 			    
 		    	if(cell.getOwnerID() == -1) {
 		    		cell.setOwnerID(command.getConnectionID());
@@ -131,9 +129,7 @@ public class Server {
 			    ClientConnection connection = connections.get(command.getConnectionID());
 			    
 			    CellPane cell = null;
-			    synchronized(this) {
-			    	cell = (CellPane) model.getGrid().getComponentAt(x, y);
-			    }
+			    cell = (CellPane) model.getGrid().getComponentAt(x, y);
 			    
 		    	if(cell.getOwnerID() == command.getConnectionID()) {
 				    cell.getPoints().addAll(scribbleCellCommand.getPoints());
@@ -152,9 +148,7 @@ public class Server {
 			    ClientConnection connection = connections.get(command.getConnectionID());
 			    
 			    CellPane cell = null;
-			    synchronized(this) {
-			    	cell = (CellPane) model.getGrid().getComponentAt(x, y);
-			    }
+			    cell = (CellPane) model.getGrid().getComponentAt(x, y);
 
 			    cell.setBackground(connection.playerColor);
 			    System.out.println(command.getConnectionID() + " - Successfully colored! " + x + " " + y);
@@ -165,9 +159,7 @@ public class Server {
 			    int y = clearCellColorCommand.getY();
 			    
 			    CellPane cell = null;
-			    synchronized(this) {
-			    	cell = (CellPane) model.getGrid().getComponentAt(x, y);
-			    }
+			    cell = (CellPane) model.getGrid().getComponentAt(x, y);
 
 			    cell.clearCell();
 			    System.out.println(command.getConnectionID() + " - Successfully cleared! " + x + " " + y);
@@ -184,7 +176,7 @@ public class Server {
     	while(true) {
     		server.processCommands();
     		try {
-				TimeUnit.MILLISECONDS.sleep(10);
+				TimeUnit.MILLISECONDS.sleep(1);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

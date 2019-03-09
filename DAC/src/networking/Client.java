@@ -25,7 +25,7 @@ public class Client {
 //		String hostName = args[0];
 //		int portNumber = Integer.parseInt(args[1]);
 		
-		String hostName = "192.168.0.29";
+		String hostName = "127.0.0.1";
 		int portNumber = 9991;
 		
 		ConcurrentLinkedQueue<Command> commandQueue = new ConcurrentLinkedQueue<Command>();
@@ -48,7 +48,7 @@ public class Client {
 		    Model t = new Model(assignedColor, commandQueue);
 		    
 		    while(true) {
-		    	while(!commandQueue.isEmpty()) {
+		    	if(!commandQueue.isEmpty()) {
 		    		if(commandQueue.peek() instanceof ScribbleCellCommand) {
 		    			ArrayList<Point> points = new ArrayList<Point>();
 		    			ScribbleCellCommand scribbleCellCommand = null;
@@ -68,20 +68,19 @@ public class Client {
 		    	out.writeObject(new PollGameDataCommand());
 		    	ArrayList<PollGameDataCommandResponse> response = (ArrayList<PollGameDataCommandResponse>)in.readObject();
 		    	
-		    	synchronized(t) {
-			    	for(PollGameDataCommandResponse command : response) {
-			    		CellPane cell = (CellPane) t.getGrid().getComponentAt(command.getX(), command.getY());
-			    		
-			    		cell.setPoints(command.getPoints());
-			    		cell.setColor(command.getBrushColor());
-			    		cell.setBackground(command.getBackgroundColor());
-			    		cell.setOwnerID(command.getOwnerID());
-			    		cell.repaint();
-			    	}
+		    	
+		    	for(PollGameDataCommandResponse command : response) {
+		    		CellPane cell = (CellPane) t.getGrid().getComponentAt(command.getX(), command.getY());
+		    		
+		    		cell.setPoints(command.getPoints());
+		    		cell.setColor(command.getBrushColor());
+		    		cell.setBackground(command.getBackgroundColor());
+		    		cell.setOwnerID(command.getOwnerID());
+		    		cell.repaint();
 		    	}
-//		    	
+		    	
 	    		try {
-					TimeUnit.MILLISECONDS.sleep(10);
+					TimeUnit.MILLISECONDS.sleep(1);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

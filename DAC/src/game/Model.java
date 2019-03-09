@@ -39,39 +39,37 @@ public class Model {
     	  
     }
     
-    public ArrayList<Command> getUpdatedState() {
-		ArrayList<Command> gameCommands = new ArrayList<Command>();
-		
-		Component[] cells = (Component[])grid.getComponents();
-		
-		for(Component c : cells) {
-			CellPane cell = (CellPane)c;
-			if(!cell.getIsModified()) {
-				continue;
-			} else if(cell.getStatus() == 1) {
-//				ScribbleCellCommand command = new ScribbleCellCommand(cell.getLocation().x, cell.getLocation().y, cell.getPoints());
+//    public ArrayList<Command> getUpdatedState() {
+//		ArrayList<Command> gameCommands = new ArrayList<Command>();
+//		
+//		Component[] cells = (Component[])grid.getComponents();
+//		
+//		for(Component c : cells) {
+//			CellPane cell = (CellPane)c;
+//			if(!cell.getIsModified()) {
+//				continue;
+//			} else if(cell.getStatus() == 1) {
+////				ScribbleCellCommand command = new ScribbleCellCommand(cell.getLocation().x, cell.getLocation().y, cell.getPoints());
+////				gameCommands.add(command);
+//				cell.setIsModified(false);
+//			} else if(cell.getStatus() == 2) {
+//				UpdateCellColorCommand command = new UpdateCellColorCommand(cell.getLocation().x, cell.getLocation().y);
 //				gameCommands.add(command);
-				cell.setIsModified(false);
-			} else if(cell.getStatus() == 2) {
-				UpdateCellColorCommand command = new UpdateCellColorCommand(cell.getLocation().x, cell.getLocation().y);
-				gameCommands.add(command);
-				cell.setIsModified(false);
-			} else if(cell.getStatus() == 3) {
-				ClearCellColorCommand command = new ClearCellColorCommand(cell.getLocation().x, cell.getLocation().y);
-				gameCommands.add(command);
-				cell.setIsModified(false);
-			}
-		}
-		return gameCommands;
-	}
-    
+//				cell.setIsModified(false);
+//			} else if(cell.getStatus() == 3) {
+//				ClearCellColorCommand command = new ClearCellColorCommand(cell.getLocation().x, cell.getLocation().y);
+//				gameCommands.add(command);
+//				cell.setIsModified(false);
+//			}
+//		}
+//		return gameCommands;
+//	}
+//    
     public ArrayList<PollGameDataCommandResponse> pollGameData() {
 		ArrayList<PollGameDataCommandResponse> gameData = new ArrayList<PollGameDataCommandResponse>();
 		
 		Component[] cells = null;
-		synchronized(this) {
-			cells = (Component[])grid.getComponents();
-		}
+		cells = (Component[])grid.getComponents();
 		
 		for(Component c : cells) {
 			CellPane cell = (CellPane)c;
