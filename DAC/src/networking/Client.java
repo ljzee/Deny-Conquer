@@ -73,11 +73,14 @@ public class Client {
 		    	for(PollGameDataCommandResponse command : response) {
 		    		CellPane cell = (CellPane) t.getGrid().getComponentAt(command.getX(), command.getY());
 		    		
-		    		cell.setPoints(command.getPoints());
-		    		cell.setColor(command.getBrushColor());
-		    		cell.setBackground(command.getBackgroundColor());
-		    		cell.setOwnerID(command.getOwnerID());
-		    		cell.repaint();
+		    		if(!cell.getDone()) {
+			    		cell.setPoints(command.getPoints());
+			    		cell.setColor(command.getBrushColor());
+			    		cell.setBackground(command.getBackgroundColor());
+			    		cell.setOwnerID(command.getOwnerID());
+			    		cell.setDone(command.getDone());
+			    		cell.repaint();
+		    		}
 		    	}
 		    	
 	    		try {

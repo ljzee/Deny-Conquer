@@ -31,6 +31,7 @@ public class CellPane extends JPanel {
     private int ownerID;
     private ConcurrentLinkedQueue<Command> commandQueue;
     private int clientID;
+    private boolean done;
 
     public CellPane(Color color) {
     	status = 0;
@@ -39,78 +40,79 @@ public class CellPane extends JPanel {
     	this.color = color;
     	isModified = false;
     	ownerID = -1;
-    	
-    	addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-//                defaultBackground = getBackground();
-//                setBackground(color);
-//                status = 2;
-            }
+    	this.done = false;
 
-            @Override
-            public void mouseExited(MouseEvent e) {
-                //setBackground(defaultBackground);
-            }
-            
-            @Override
-            public void mousePressed(MouseEvent e) {
-//            	isModified = true;
-//            	points.add(e.getPoint());
-//            	status = 1;
-//            	repaint();
-            }
-            
-            @Override
-            public void mouseReleased(MouseEvent e) {
-//            	isModified = true;
-//            	//setBackground(defaultBackground);
-//            	Dimension d = getSize();
-//            	BufferedImage image = new BufferedImage(d.width,d.height, BufferedImage.TYPE_INT_RGB);
-//            	Graphics2D iG = image.createGraphics();
-//            	print(iG);
-//            	iG.dispose();
-//            	
-//            	//getting width/height/area of cell
-//            	int width = image.getWidth();
-//            	int height = image.getHeight();
-//            	float area = width*height;
-//            	
-//            	int amountColored = 0;
-//            	int amountUncolored = 0;
-//            	
-//            	for(int x = 0; x < width; ++x) {
-//            		for(int y = 0; y < height; ++y) {
-//            			int rgb = image.getRGB(x, y);
-//            			if(rgb == color.getRGB()) {
-//            				amountColored++; //how much of cell has been colored
-//            			} else if(rgb == defaultBackground.getRGB()) {
-//            				amountUncolored++;
-//            			} else {
-//            				//System.out.println(new Color(rgb));
-//            			}
-//            		}
-//            	}
-//            	
-//            	if(amountColored/area > 0.6) {
-//            		status = 2;
-//            		setBackground(color);
-//            	} else {
-//            		clearCell();
-//            	}
-            }
-        });
-    	
-    	addMouseMotionListener(new MouseAdapter() {
-	        @Override
-            public void mouseDragged(MouseEvent e) {
-//            	isModified = true;
-//            	points.add(e.getPoint());
-//            	status = 1;
-//                repaint();
-//            	System.out.println(e.getPoint());
-            }
-    	});
+//    	addMouseListener(new MouseAdapter() {
+//            @Override
+//            public void mouseEntered(MouseEvent e) {
+////                defaultBackground = getBackground();
+////                setBackground(color);
+////                status = 2;
+//            }
+//
+//            @Override
+//            public void mouseExited(MouseEvent e) {
+//                //setBackground(defaultBackground);
+//            }
+//            
+//            @Override
+//            public void mousePressed(MouseEvent e) {
+////            	isModified = true;
+////            	points.add(e.getPoint());
+////            	status = 1;
+////            	repaint();
+//            }
+//            
+//            @Override
+//            public void mouseReleased(MouseEvent e) {
+////            	isModified = true;
+////            	//setBackground(defaultBackground);
+////            	Dimension d = getSize();
+////            	BufferedImage image = new BufferedImage(d.width,d.height, BufferedImage.TYPE_INT_RGB);
+////            	Graphics2D iG = image.createGraphics();
+////            	print(iG);
+////            	iG.dispose();
+////            	
+////            	//getting width/height/area of cell
+////            	int width = image.getWidth();
+////            	int height = image.getHeight();
+////            	float area = width*height;
+////            	
+////            	int amountColored = 0;
+////            	int amountUncolored = 0;
+////            	
+////            	for(int x = 0; x < width; ++x) {
+////            		for(int y = 0; y < height; ++y) {
+////            			int rgb = image.getRGB(x, y);
+////            			if(rgb == color.getRGB()) {
+////            				amountColored++; //how much of cell has been colored
+////            			} else if(rgb == defaultBackground.getRGB()) {
+////            				amountUncolored++;
+////            			} else {
+////            				//System.out.println(new Color(rgb));
+////            			}
+////            		}
+////            	}
+////            	
+////            	if(amountColored/area > 0.6) {
+////            		status = 2;
+////            		setBackground(color);
+////            	} else {
+////            		clearCell();
+////            	}
+//            }
+//        });
+//    	
+//    	addMouseMotionListener(new MouseAdapter() {
+//	        @Override
+//            public void mouseDragged(MouseEvent e) {
+////            	isModified = true;
+////            	points.add(e.getPoint());
+////            	status = 1;
+////                repaint();
+////            	System.out.println(e.getPoint());
+//            }
+//    	});
     }
     
     public CellPane(Color color, ConcurrentLinkedQueue<Command> commandQueue, int clientID) {
@@ -122,6 +124,7 @@ public class CellPane extends JPanel {
     	ownerID = -1;
     	this.commandQueue = commandQueue;
     	this.clientID = clientID;
+    	this.done = false;
     	
     	addMouseListener(new MouseAdapter() {
             @Override
@@ -138,7 +141,7 @@ public class CellPane extends JPanel {
             
             @Override
             public void mousePressed(MouseEvent e) {
-            	if(ownerID == -1) {
+            	if(ownerID == -1 && !done) {
 	            	LockCellCommand command = new LockCellCommand(getX(), getY());
 	            	commandQueue.add(command);
 	            	
@@ -154,7 +157,7 @@ public class CellPane extends JPanel {
             public void mouseReleased(MouseEvent e) {
 //            	UpdateCellColorCommand command = new UpdateCellColorCommand(e.getPoint().x, e.getPoint().y);
 //            	commandQueue.add(command);
-            	if(ownerID == clientID) {
+            	if((ownerID == -1 || ownerID == clientID) && !done) {
 	            	ClearCellColorCommand command = new ClearCellColorCommand(getX(), getY());
 	            	commandQueue.add(command);
 	            	
@@ -203,7 +206,7 @@ public class CellPane extends JPanel {
     	addMouseMotionListener(new MouseAdapter() {
 	        @Override
 	        public void mouseDragged(MouseEvent e) {
-	        	if(ownerID == clientID) {
+	        	if((ownerID == -1 || ownerID == clientID) && !done) {
 		        	ScribbleCellCommand command = new ScribbleCellCommand(getX(), getY(), e.getPoint());
 		        	commandQueue.add(command);
 		        	System.out.println("drag: " + getX() + " " + getY());
@@ -229,6 +232,41 @@ public class CellPane extends JPanel {
 	        for (int i = 1; i < points.size(); i++) {
 	            g2.draw(new Line2D.Float(points.get(i-1), points.get(i)));
 	        }
+    	}
+    }
+    
+    public boolean reachedColoredThreshold() {
+    	Dimension d = getSize();
+    	BufferedImage image = new BufferedImage(d.width,d.height, BufferedImage.TYPE_INT_RGB);
+    	Graphics2D iG = image.createGraphics();
+    	print(iG);
+    	iG.dispose();
+    	
+    	//getting width/height/area of cell
+    	int width = image.getWidth();
+    	int height = image.getHeight();
+    	float area = width*height;
+    	
+    	int amountColored = 0;
+    	int amountUncolored = 0;
+    	
+    	for(int x = 0; x < width; ++x) {
+    		for(int y = 0; y < height; ++y) {
+    			int rgb = image.getRGB(x, y);
+    			if(rgb == color.getRGB()) {
+    				amountColored++; //how much of cell has been colored
+    			} else if(rgb == defaultBackground.getRGB()) {
+    				amountUncolored++;
+    			} else {
+    				//System.out.println(new Color(rgb));
+    			}
+    		}
+    	}
+    	
+    	if(amountColored/area > 0.6) {
+    		return true;
+    	} else {
+    		return false;
     	}
     }
     
@@ -276,6 +314,15 @@ public class CellPane extends JPanel {
     public void setStatus(int status) {
     	this.status = status;
     }
+    
+    public void setDone(boolean b) {
+    	this.done = b;
+    }
+    
+    public boolean getDone() {
+    	return done;
+    }
+
 
     
     public void clearStatus() {

@@ -18,14 +18,16 @@ public class PollGameDataCommandResponse implements Command {
 	private Color brushColor;
 	private ArrayList<Point> points;
 	private int ownerID;
+	private boolean done;
 	
-	public PollGameDataCommandResponse(int x, int y, Color backgroundColor, Color brushColor, ArrayList<Point> points, int ownerID) {
+	public PollGameDataCommandResponse(int x, int y, Color backgroundColor, Color brushColor, ArrayList<Point> points, int ownerID, boolean done) {
 		this.x = x;
 		this.y = y;
 		this.backgroundColor = backgroundColor;
 		this.brushColor = brushColor;
 		this.points = new ArrayList<Point>(points);
 		this.ownerID = ownerID;
+		this.done = done;
 	}
 	
 	public int getX() {
@@ -50,6 +52,10 @@ public class PollGameDataCommandResponse implements Command {
 	
 	public int getOwnerID() {
 		return ownerID;
+	}
+	
+	public boolean getDone() {
+		return done;
 	}
 
 	public int getTimeStamp() {

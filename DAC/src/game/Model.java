@@ -80,8 +80,9 @@ public class Model {
 			Color brushColor = cell.getColor();
 			ArrayList<Point> points = cell.getPoints();
 			int ownerID = cell.getOwnerID();
+			boolean done = cell.getDone();
 			
-			gameData.add(new PollGameDataCommandResponse(x,y,backgroundColor,brushColor, points, ownerID));
+			gameData.add(new PollGameDataCommandResponse(x,y,backgroundColor,brushColor, points, ownerID, done));
 		}
 		return gameData;
 	}

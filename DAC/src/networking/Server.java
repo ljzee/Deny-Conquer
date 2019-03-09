@@ -112,8 +112,7 @@ public class Server {
 			    
 			    ClientConnection connection = connections.get(command.getConnectionID());
 			    
-			    CellPane cell = null;
-			    cell = (CellPane) model.getGrid().getComponentAt(x, y);
+			    CellPane cell = (CellPane) model.getGrid().getComponentAt(x, y);
 			    
 		    	if(cell.getOwnerID() == -1) {
 		    		cell.setOwnerID(command.getConnectionID());
@@ -130,8 +129,7 @@ public class Server {
 			    
 			    ClientConnection connection = connections.get(command.getConnectionID());
 			    
-			    CellPane cell = null;
-			    cell = (CellPane) model.getGrid().getComponentAt(x, y);
+			    CellPane cell = (CellPane) model.getGrid().getComponentAt(x, y);
 			    
 		    	if(cell.getOwnerID() == command.getConnectionID()) {
 				    cell.getPoints().addAll(scribbleCellCommand.getPoints());
@@ -141,30 +139,27 @@ public class Server {
 		    	} else {
 		    		System.out.println(command.getConnectionID() + " - Failed scribbled!: client ID: " + cell.getOwnerID() + " has locked this cell.");
 		    	}
-			} else if(command instanceof UpdateCellColorCommand) {
-				UpdateCellColorCommand updateCellColorCommand = (UpdateCellColorCommand) command;
-				
-				int x = updateCellColorCommand.getX();
-			    int y = updateCellColorCommand.getY();
-
-			    ClientConnection connection = connections.get(command.getConnectionID());
-			    
-			    CellPane cell = null;
-			    cell = (CellPane) model.getGrid().getComponentAt(x, y);
-
-			    cell.setBackground(connection.playerColor);
-			    System.out.println(command.getConnectionID() + " - Successfully colored! " + x + " " + y);
 			} else if(command instanceof ClearCellColorCommand) {
 				ClearCellColorCommand clearCellColorCommand = (ClearCellColorCommand) command;
 				
 				int x = clearCellColorCommand.getX();
 			    int y = clearCellColorCommand.getY();
 			    
-			    CellPane cell = null;
-			    cell = (CellPane) model.getGrid().getComponentAt(x, y);
-
-			    cell.clearCell();
-			    System.out.println(command.getConnectionID() + " - Successfully cleared! " + x + " " + y);
+			    ClientConnection connection = connections.get(command.getConnectionID());
+			    
+			    CellPane cell = (CellPane) model.getGrid().getComponentAt(x, y);
+			    
+			    if(cell.reachedColoredThreshold()) {
+			    	int ownerID = cell.getOwnerID();
+			    	cell.clearCell();
+			    	cell.setOwnerID(ownerID);
+			    	cell.setBackground(connection.playerColor);
+			    	cell.setDone(true);
+			    	System.out.println(command.getConnectionID() + " - Successfully colored! " + x + " " + y);
+			    } else {
+			    	cell.clearCell();
+				    System.out.println(command.getConnectionID() + " - Successfully cleared! " + x + " " + y);
+			    }
 			}
 		}
 	}
