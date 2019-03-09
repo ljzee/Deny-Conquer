@@ -30,6 +30,7 @@ public class CellPane extends JPanel {
     private boolean isModified;
     private int ownerID;
     private ConcurrentLinkedQueue<Command> commandQueue;
+    private int clientID;
 
     public CellPane(Color color) {
     	status = 0;
@@ -54,66 +55,65 @@ public class CellPane extends JPanel {
             
             @Override
             public void mousePressed(MouseEvent e) {
-            	isModified = true;
-            	points.add(e.getPoint());
-            	status = 1;
-            	repaint();
+//            	isModified = true;
+//            	points.add(e.getPoint());
+//            	status = 1;
+//            	repaint();
             }
             
             @Override
             public void mouseReleased(MouseEvent e) {
-            	isModified = true;
-            	//setBackground(defaultBackground);
-            	Dimension d = getSize();
-            	BufferedImage image = new BufferedImage(d.width,d.height, BufferedImage.TYPE_INT_RGB);
-            	Graphics2D iG = image.createGraphics();
-            	print(iG);
-            	iG.dispose();
-            	
-            	//getting width/height/area of cell
-            	int width = image.getWidth();
-            	int height = image.getHeight();
-            	float area = width*height;
-            	
-            	int amountColored = 0;
-            	int amountUncolored = 0;
-            	
-            	for(int x = 0; x < width; ++x) {
-            		for(int y = 0; y < height; ++y) {
-            			int rgb = image.getRGB(x, y);
-            			if(rgb == color.getRGB()) {
-            				amountColored++; //how much of cell has been colored
-            			} else if(rgb == defaultBackground.getRGB()) {
-            				amountUncolored++;
-            			} else {
-            				//System.out.println(new Color(rgb));
-            			}
-            		}
-            	}
-            	
-            	if(amountColored/area > 0.6) {
-            		status = 2;
-            		setBackground(color);
-            	} else {
-            		clearCell();
-            	}
-
+//            	isModified = true;
+//            	//setBackground(defaultBackground);
+//            	Dimension d = getSize();
+//            	BufferedImage image = new BufferedImage(d.width,d.height, BufferedImage.TYPE_INT_RGB);
+//            	Graphics2D iG = image.createGraphics();
+//            	print(iG);
+//            	iG.dispose();
+//            	
+//            	//getting width/height/area of cell
+//            	int width = image.getWidth();
+//            	int height = image.getHeight();
+//            	float area = width*height;
+//            	
+//            	int amountColored = 0;
+//            	int amountUncolored = 0;
+//            	
+//            	for(int x = 0; x < width; ++x) {
+//            		for(int y = 0; y < height; ++y) {
+//            			int rgb = image.getRGB(x, y);
+//            			if(rgb == color.getRGB()) {
+//            				amountColored++; //how much of cell has been colored
+//            			} else if(rgb == defaultBackground.getRGB()) {
+//            				amountUncolored++;
+//            			} else {
+//            				//System.out.println(new Color(rgb));
+//            			}
+//            		}
+//            	}
+//            	
+//            	if(amountColored/area > 0.6) {
+//            		status = 2;
+//            		setBackground(color);
+//            	} else {
+//            		clearCell();
+//            	}
             }
         });
     	
     	addMouseMotionListener(new MouseAdapter() {
 	        @Override
             public void mouseDragged(MouseEvent e) {
-            	isModified = true;
-            	points.add(e.getPoint());
-            	status = 1;
-                repaint();
-            	System.out.println(e.getPoint());
+//            	isModified = true;
+//            	points.add(e.getPoint());
+//            	status = 1;
+//                repaint();
+//            	System.out.println(e.getPoint());
             }
     	});
     }
     
-    public CellPane(Color color, ConcurrentLinkedQueue<Command> commandQueue) {
+    public CellPane(Color color, ConcurrentLinkedQueue<Command> commandQueue, int clientID) {
     	status = 0;
     	points = new ArrayList<Point>();
     	defaultBackground = getBackground();
@@ -121,6 +121,7 @@ public class CellPane extends JPanel {
     	isModified = false;
     	ownerID = -1;
     	this.commandQueue = commandQueue;
+    	this.clientID = clientID;
     	
     	addMouseListener(new MouseAdapter() {
             @Override
@@ -153,12 +154,12 @@ public class CellPane extends JPanel {
             public void mouseReleased(MouseEvent e) {
 //            	UpdateCellColorCommand command = new UpdateCellColorCommand(e.getPoint().x, e.getPoint().y);
 //            	commandQueue.add(command);
-//            	if(ownerID == -1) {
+            	if(ownerID == clientID) {
 	            	ClearCellColorCommand command = new ClearCellColorCommand(getX(), getY());
 	            	commandQueue.add(command);
 	            	
 	            	System.out.println("Clear: " + getX() + " " + getY());
-//            	}
+            	}
 //            	isModified = true;
 //            	//setBackground(defaultBackground);
 //            	Dimension d = getSize();
@@ -202,9 +203,11 @@ public class CellPane extends JPanel {
     	addMouseMotionListener(new MouseAdapter() {
 	        @Override
 	        public void mouseDragged(MouseEvent e) {
-	        	ScribbleCellCommand command = new ScribbleCellCommand(getX(), getY(), e.getPoint());
-	        	commandQueue.add(command);
-	        	System.out.println("drag: " + getX() + " " + getY());
+	        	if(ownerID == clientID) {
+		        	ScribbleCellCommand command = new ScribbleCellCommand(getX(), getY(), e.getPoint());
+		        	commandQueue.add(command);
+		        	System.out.println("drag: " + getX() + " " + getY());
+	        	}
 	//        	isModified = true;
 	//        	points.add(e.getPoint());
 	//        	status = 1;

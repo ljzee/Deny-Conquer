@@ -44,8 +44,9 @@ public class Client {
 		    
 		    //Blocks until server starts a game session in which colors will be assigned to all players, server blocks if not enough connections
 		    Color assignedColor = (Color)in.readObject();
+		    int clientID = (int)in.readObject();
 		    
-		    Model t = new Model(assignedColor, commandQueue);
+		    Model t = new Model(assignedColor, commandQueue, clientID);
 		    
 		    while(true) {
 		    	if(!commandQueue.isEmpty()) {
@@ -80,7 +81,7 @@ public class Client {
 		    	}
 		    	
 	    		try {
-					TimeUnit.MILLISECONDS.sleep(1);
+					TimeUnit.MILLISECONDS.sleep(5);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

@@ -90,6 +90,8 @@ public class Server {
 			Color color = getUnusedColor();
 			c.setColor(color);
 			c.sendToClient(color);
+			
+			c.sendToClient(c.getConnectionID());
 		}
 	}
 	
@@ -176,7 +178,7 @@ public class Server {
     	while(true) {
     		server.processCommands();
     		try {
-				TimeUnit.MILLISECONDS.sleep(1);
+				TimeUnit.MILLISECONDS.sleep(5);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
