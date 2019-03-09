@@ -1,28 +1,22 @@
 package command;
 
 import java.awt.Color;
-import java.awt.Point;
 import java.io.Serializable;
-import java.util.ArrayList;
 
-public class ScribbleCellCommand implements Command {
+public class LockCellCommand implements Command {
 	/**
 	 * 
 	 */
 	int connectionID = -1;
-	ArrayList<Point> points;
-	Point point;
 	
 	private static final long serialVersionUID = 1146724334964356307L;
 	
 	int x;
 	int y;
 	
-	public ScribbleCellCommand(int x, int y, Point point) {
+	public LockCellCommand(int x, int y) {
 		this.x = x;
 		this.y = y;
-		//this.points = new ArrayList<Point>(points);
-		this.point = point;
 	}
 	
 	public int getX() {
@@ -32,15 +26,6 @@ public class ScribbleCellCommand implements Command {
 	public int getY() {
 		return y;
 	}
-	
-//	public ArrayList<Point> getPoints() {
-//		return points;
-//	}
-	
-	public Point getPoint() {
-		return point;
-	}
-
 
 
 	public int getTimeStamp() {

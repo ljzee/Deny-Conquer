@@ -12,6 +12,7 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
@@ -45,20 +46,20 @@ public class Model {
 		
 		for(Component c : cells) {
 			CellPane cell = (CellPane)c;
-			if(cell.getStatus() == 0) {
+			if(!cell.getIsModified()) {
 				continue;
 			} else if(cell.getStatus() == 1) {
-				ScribbleCellCommand command = new ScribbleCellCommand(cell.getLocation().x, cell.getLocation().y, cell.getPoints());
-				gameCommands.add(command);
-				cell.clearStatus();
+//				ScribbleCellCommand command = new ScribbleCellCommand(cell.getLocation().x, cell.getLocation().y, cell.getPoints());
+//				gameCommands.add(command);
+				cell.setIsModified(false);
 			} else if(cell.getStatus() == 2) {
 				UpdateCellColorCommand command = new UpdateCellColorCommand(cell.getLocation().x, cell.getLocation().y);
 				gameCommands.add(command);
-				cell.clearStatus();
+				cell.setIsModified(false);
 			} else if(cell.getStatus() == 3) {
 				ClearCellColorCommand command = new ClearCellColorCommand(cell.getLocation().x, cell.getLocation().y);
 				gameCommands.add(command);
-				cell.clearStatus();
+				cell.setIsModified(false);
 			}
 		}
 		return gameCommands;
@@ -74,9 +75,12 @@ public class Model {
 			
 			int x = cell.getLocation().x;
 			int y = cell.getLocation().y;
-			Color color = cell.getBackground();
-
-			gameData.add(new PollGameDataCommandResponse(x,y,color));
+			Color backgroundColor = cell.getBackground();
+			Color brushColor = cell.getColor();
+			ArrayList<Point> points = cell.getPoints();
+			int ownerID = cell.getOwnerID();
+			
+			gameData.add(new PollGameDataCommandResponse(x,y,backgroundColor,brushColor, points, ownerID));
 		}
 		return gameData;
 	}
@@ -89,6 +93,24 @@ public class Model {
 
         frame = new JFrame("Testing");
         grid = new Grid(color); 
+        
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
+        frame.add(grid);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+    
+    
+    public Model(Color color, ConcurrentLinkedQueue<Command> commandQueue) {
+    	try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+        }
+
+        frame = new JFrame("Testing");
+        grid = new Grid(color, commandQueue); 
         
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());

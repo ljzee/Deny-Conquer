@@ -9,11 +9,13 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
 import command.Command;
 import command.PollGameDataCommand;
 import command.PollGameDataCommandResponse;
+import game.CellPane;
 import game.Model;
 
 public class Client {
@@ -23,6 +25,8 @@ public class Client {
 		
 		String hostName = "127.0.0.1";
 		int portNumber = 9991;
+		
+		ConcurrentLinkedQueue<Command> commandQueue = new ConcurrentLinkedQueue<Command>();
 
 
 		try {
@@ -39,25 +43,29 @@ public class Client {
 		    //Blocks until server starts a game session in which colors will be assigned to all players, server blocks if not enough connections
 		    Color assignedColor = (Color)in.readObject();
 		    
-		    Model t = new Model(assignedColor);
-
-		    ArrayList<Command> commands = new ArrayList<Command>();
+		    Model t = new Model(assignedColor, commandQueue);
 		    
 		    while(true) {
-		    	commands = t.getUpdatedState();
-		    	if(!commands.isEmpty()) {
-		    		for(Command command : commands) {
-		    			out.writeObject(command);
-		    			in.readObject();
-		    		}
+		    	while(!commandQueue.isEmpty()) {
+	    			out.writeObject(commandQueue.poll());
+	    			in.readObject();
 		    	}
 		    	
 		    	out.writeObject(new PollGameDataCommand());
 		    	ArrayList<PollGameDataCommandResponse> response = (ArrayList<PollGameDataCommandResponse>)in.readObject();
-		    	for(PollGameDataCommandResponse command : response) {
-		    		t.getGrid().getComponentAt(command.getX(), command.getY()).setBackground(command.getColor());
-		    	}
 		    	
+		    	synchronized(t) {
+			    	for(PollGameDataCommandResponse command : response) {
+			    		CellPane cell = (CellPane) t.getGrid().getComponentAt(command.getX(), command.getY());
+			    		
+			    		cell.setPoints(command.getPoints());
+			    		cell.setColor(command.getBrushColor());
+			    		cell.setBackground(command.getBackgroundColor());
+			    		cell.setOwnerID(command.getOwnerID());
+			    		cell.repaint();
+			    	}
+		    	}
+//		    	
 	    		try {
 					TimeUnit.MILLISECONDS.sleep(10);
 				} catch (InterruptedException e) {

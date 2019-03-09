@@ -31,8 +31,7 @@ public class PollGameDataCommand implements Command {
 		return connectionID;
 	}
 
-	public int setConnectionID(int connectionID) {
+	public void setConnectionID(int connectionID) {
 		this.connectionID = connectionID;
-		return 0;
 	}
 }

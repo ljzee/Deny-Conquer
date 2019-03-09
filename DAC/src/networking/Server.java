@@ -19,6 +19,7 @@ import javax.swing.JRootPane;
 
 import command.ClearCellColorCommand;
 import command.Command;
+import command.LockCellCommand;
 import command.PollGameDataCommand;
 import command.ScribbleCellCommand;
 import command.UpdateCellColorCommand;
@@ -104,7 +105,24 @@ public class Server {
 	public void processCommands() {
 		while(!commandQueue.isEmpty()) {
 			Command command = commandQueue.poll();
-			if(command instanceof ScribbleCellCommand) {
+			if(command instanceof LockCellCommand) {
+				LockCellCommand lockCellCommand = (LockCellCommand) command;
+				
+				int x = lockCellCommand.getX();
+			    int y = lockCellCommand.getY();
+			    
+			    ClientConnection connection = connections.get(command.getConnectionID());
+			    
+			    CellPane cell = (CellPane) model.getGrid().getComponentAt(x, y);
+			    
+		    	if(cell.getOwnerID() == -1) {
+		    		cell.setOwnerID(command.getConnectionID());
+		    		cell.setColor(connection.playerColor);
+		    		System.out.println(command.getConnectionID() + " - Successfully locked! " + x + " " + y);
+		    	} else {
+		    		System.out.println(command.getConnectionID() + " - Failed lock!: client ID: " + cell.getOwnerID() + " has already locked this cell.");
+		    	} 
+			} else if(command instanceof ScribbleCellCommand) {
 				ScribbleCellCommand scribbleCellCommand = (ScribbleCellCommand) command;
 				
 				int x = scribbleCellCommand.getX();
@@ -113,9 +131,14 @@ public class Server {
 			    ClientConnection connection = connections.get(command.getConnectionID());
 			    
 			    CellPane cell = (CellPane) model.getGrid().getComponentAt(x, y);
-			    cell.setColor(connection.playerColor);
-			    cell.scribble(scribbleCellCommand.getPoints());
-			    System.out.println("Successfully scribbled!: x=" + scribbleCellCommand.getPoints().size() + " y=" + scribbleCellCommand.getPoints().get(0));
+			    
+		    	if(cell.getOwnerID() == command.getConnectionID()) {
+				    cell.getPoints().add(scribbleCellCommand.getPoint());
+				    cell.repaint();
+				    System.out.println(command.getConnectionID() + " - Successfully scribbled! " + x + " " + y);
+		    	} else {
+		    		System.out.println(command.getConnectionID() + " - Failed scribbled!: client ID: " + cell.getOwnerID() + " has locked this cell.");
+		    	}
 			} else if(command instanceof UpdateCellColorCommand) {
 				UpdateCellColorCommand updateCellColorCommand = (UpdateCellColorCommand) command;
 				
@@ -126,8 +149,7 @@ public class Server {
 			    
 			    CellPane cell = (CellPane) model.getGrid().getComponentAt(x, y);
 			    cell.setBackground(connection.playerColor);
-			    cell.setStatus(4);
-			    System.out.println("Successfully colored!");
+			    System.out.println(command.getConnectionID() + " - Successfully colored! " + x + " " + y);
 			} else if(command instanceof ClearCellColorCommand) {
 				ClearCellColorCommand clearCellColorCommand = (ClearCellColorCommand) command;
 				
@@ -136,8 +158,7 @@ public class Server {
 			    
 			    CellPane cell = (CellPane) model.getGrid().getComponentAt(x, y);
 			    cell.clearCell();
-			    cell.clearStatus();
-			    System.out.println("Successfully cleared!");
+			    System.out.println(command.getConnectionID() + " - Successfully cleared! " + x + " " + y);
 			}
 		}
 	}
