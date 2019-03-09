@@ -1,6 +1,7 @@
 package networking;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,8 +10,14 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeUnit;
 
+import command.Command;
 import command.PollGameDataCommand;
+import command.PollGameDataCommandResponse;
+import command.ScribbleCellCommand;
+import game.CellPane;
 import game.Model;
 
 public class Client {
@@ -20,6 +27,8 @@ public class Client {
 		
 		String hostName = "127.0.0.1";
 		int portNumber = 9991;
+		
+		ConcurrentLinkedQueue<Command> commandQueue = new ConcurrentLinkedQueue<Command>();
 
 
 		try {
@@ -33,37 +42,53 @@ public class Client {
 		        new BufferedReader(
 		            new InputStreamReader(System.in));
 		    
-		    Model t = new Model(Color.RED);
+		    //Blocks until server starts a game session in which colors will be assigned to all players, server blocks if not enough connections
+		    Color assignedColor = (Color)in.readObject();
+		    int clientID = (int)in.readObject();
 		    
-		    String userInput;
-
-		    ArrayList<String> commands = new ArrayList<String>();
+		    Model t = new Model(assignedColor, commandQueue, clientID);
 		    
 		    while(true) {
-		    	commands = t.getBlueCells();
-		    	if(!commands.isEmpty()) {
-		    		for(String command : commands) {
-		    			out.writeObject(command);
-		    			System.out.println((String)in.readObject());
+		    	if(!commandQueue.isEmpty()) {
+		    		if(commandQueue.peek() instanceof ScribbleCellCommand) {
+		    			ArrayList<Point> points = new ArrayList<Point>();
+		    			ScribbleCellCommand scribbleCellCommand = null;
+			    		while(commandQueue.peek() instanceof ScribbleCellCommand) {
+			    			scribbleCellCommand = (ScribbleCellCommand) commandQueue.poll();
+			    			points.add(scribbleCellCommand.getPoint());
+			    		}
+			    		ScribbleCellCommand command = new ScribbleCellCommand(scribbleCellCommand.getX(),scribbleCellCommand.getY(),points);
+			    		out.writeObject(command);
+		    			in.readObject();
+		    		} else {
+		    			out.writeObject(commandQueue.poll());
+		    			in.readObject();
 		    		}
 		    	}
 		    	
-		    	out.writeObject("Poll");
-		    	ArrayList<PollGameDataCommand> response = (ArrayList<PollGameDataCommand>)in.readObject();
+		    	out.writeObject(new PollGameDataCommand());
+		    	ArrayList<PollGameDataCommandResponse> response = (ArrayList<PollGameDataCommandResponse>)in.readObject();
 		    	
-		    	for(PollGameDataCommand command : response) {
-		    		t.getGrid().getComponentAt(command.getX(), command.getY()).setBackground(command.getColor());;
+		    	
+		    	for(PollGameDataCommandResponse command : response) {
+		    		CellPane cell = (CellPane) t.getGrid().getComponentAt(command.getX(), command.getY());
+		    		
+		    		if(!cell.getDone()) {
+			    		cell.setPoints(command.getPoints());
+			    		cell.setColor(command.getBrushColor());
+			    		cell.setBackground(command.getBackgroundColor());
+			    		cell.setOwnerID(command.getOwnerID());
+			    		cell.setDone(command.getDone());
+			    		cell.repaint();
+		    		}
 		    	}
-//		    	
-//		    	if(response.startsWith("Color ")) {
-//            	   String[] coordinates = response.trim().substring(6).split("\\s+");
-//            	   
-//            	   int x = Integer.parseInt(coordinates[0]);
-//            	   int y = Integer.parseInt(coordinates[1]);
-//            	   
-//            	   t.getGrid().getComponentAt(x, y).setBackground(Color.BLUE);
-//               }
 		    	
+	    		try {
+					TimeUnit.MILLISECONDS.sleep(5);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 		    }
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

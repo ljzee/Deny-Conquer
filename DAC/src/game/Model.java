@@ -12,6 +12,7 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
@@ -23,7 +24,11 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 
-import command.PollGameDataCommand;
+import command.ClearCellColorCommand;
+import command.Command;
+import command.PollGameDataCommandResponse;
+import command.ScribbleCellCommand;
+import command.UpdateCellColorCommand;
 
 public class Model {
 	
@@ -31,66 +36,53 @@ public class Model {
 	private Grid grid;
 
     public static void main(String[] args) {
-    	
-//    	Test t = new Test();
-//		TestPane grid = t.getGrid();
-//		
-//		
-//		System.out.println(grid.getComponent(1).getClass());
-//		System.out.println(grid.getComponent(1).getName());
+    	  
+    }
+    
+//    public ArrayList<Command> getUpdatedState() {
+//		ArrayList<Command> gameCommands = new ArrayList<Command>();
 //		
 //		Component[] cells = (Component[])grid.getComponents();
 //		
-//		int blueCells = 0;
-//		System.out.println(grid.getComponents().getClass());
-//		
-//    try {
-//		TimeUnit.SECONDS.sleep(5);
-//	} catch (InterruptedException e) {
-//		// TODO Auto-generated catch block
-//		e.printStackTrace();
+//		for(Component c : cells) {
+//			CellPane cell = (CellPane)c;
+//			if(!cell.getIsModified()) {
+//				continue;
+//			} else if(cell.getStatus() == 1) {
+////				ScribbleCellCommand command = new ScribbleCellCommand(cell.getLocation().x, cell.getLocation().y, cell.getPoints());
+////				gameCommands.add(command);
+//				cell.setIsModified(false);
+//			} else if(cell.getStatus() == 2) {
+//				UpdateCellColorCommand command = new UpdateCellColorCommand(cell.getLocation().x, cell.getLocation().y);
+//				gameCommands.add(command);
+//				cell.setIsModified(false);
+//			} else if(cell.getStatus() == 3) {
+//				ClearCellColorCommand command = new ClearCellColorCommand(cell.getLocation().x, cell.getLocation().y);
+//				gameCommands.add(command);
+//				cell.setIsModified(false);
+//			}
+//		}
+//		return gameCommands;
 //	}
-		       
-    }
-    
-    public ArrayList<String> getBlueCells() {
-		ArrayList<String> blueCells = new ArrayList<String>();
+//    
+    public ArrayList<PollGameDataCommandResponse> pollGameData() {
+		ArrayList<PollGameDataCommandResponse> gameData = new ArrayList<PollGameDataCommandResponse>();
 		
-		Component[] cells = (Component[])grid.getComponents();
-		
-		StringBuilder cellLocationCommand = new StringBuilder();
-		
-		for(Component c : cells) {
-			CellPane cell = (CellPane)c;
-			if(cell.getStatus() != 0) {
-				cellLocationCommand.append("Color ");
-				
-				cellLocationCommand.append(cell.getLocation().x);
-				cellLocationCommand.append(" ");
-				cellLocationCommand.append(cell.getLocation().y);
-				blueCells.add(cellLocationCommand.toString());
-				
-				cell.clearStatus();
-				
-				cellLocationCommand.setLength(0);
-			}
-		}
-		return blueCells;
-	}
-    
-    public ArrayList<PollGameDataCommand> pollGameData() {
-		ArrayList<PollGameDataCommand> gameData = new ArrayList<PollGameDataCommand>();
-		
-		Component[] cells = (Component[])grid.getComponents();
+		Component[] cells = null;
+		cells = (Component[])grid.getComponents();
 		
 		for(Component c : cells) {
 			CellPane cell = (CellPane)c;
 			
 			int x = cell.getLocation().x;
 			int y = cell.getLocation().y;
-			Color color = cell.getBackground();
-
-			gameData.add(new PollGameDataCommand(x,y,color));
+			Color backgroundColor = cell.getBackground();
+			Color brushColor = cell.getColor();
+			ArrayList<Point> points = cell.getPoints();
+			int ownerID = cell.getOwnerID();
+			boolean done = cell.getDone();
+			
+			gameData.add(new PollGameDataCommandResponse(x,y,backgroundColor,brushColor, points, ownerID, done));
 		}
 		return gameData;
 	}
@@ -110,47 +102,24 @@ public class Model {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-    	
-//        EventQueue.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-//                }
-//
-//                JFrame frame = new JFrame("Testing");
-//                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//                frame.setLayout(new BorderLayout());
-//                frame.add(new TestPane());
-//                frame.pack();
-//                frame.setLocationRelativeTo(null);
-//                frame.setVisible(true);
-//                
-////                try {
-////					TimeUnit.SECONDS.sleep(10);
-////				} catch (InterruptedException e) {
-////					// TODO Auto-generated catch block
-////					e.printStackTrace();
-////				}
-////                
-////                JRootPane grid = (JRootPane)frame.getComponent(0);
-////                
-////                Component[] cells = (Component[])grid.getComponents();
-////                
-////                int blueCells = 0;
-////                
-////                for(CellPane cell : cells) {
-////                	if(cell.getBackground().equals(Color.BLUE)) {
-////                		blueCells++;
-////                	}
-////                }
-////                
-////                System.out.println("Blue cells: " + blueCells);
-//                
-//                
-//            }
-//        });
+    }
+    
+    
+    public Model(Color color, ConcurrentLinkedQueue<Command> commandQueue, int clientID) {
+    	try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+        }
+
+        frame = new JFrame("Testing");
+        grid = new Grid(color, commandQueue, clientID); 
+        
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
+        frame.add(grid);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
     
     public JFrame getFrame() {
