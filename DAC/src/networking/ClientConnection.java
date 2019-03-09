@@ -78,10 +78,7 @@ public class ClientConnection extends Thread {
 				
 				//I want to move this out, but can't figure out how
 				if(command instanceof PollGameDataCommand) {
-					synchronized(this) {
-						server.processCommands();
-						this.ooutstream.writeObject(server.model.pollGameData());
-					}
+					this.ooutstream.writeObject(server.model.pollGameData());
 				} else {
 					command.setConnectionID(connectionID);
 					server.commandQueue.add(command);

@@ -1,6 +1,7 @@
 package networking;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import command.Command;
 import command.PollGameDataCommand;
 import command.PollGameDataCommandResponse;
+import command.ScribbleCellCommand;
 import game.CellPane;
 import game.Model;
 
@@ -23,7 +25,7 @@ public class Client {
 //		String hostName = args[0];
 //		int portNumber = Integer.parseInt(args[1]);
 		
-		String hostName = "127.0.0.1";
+		String hostName = "192.168.0.29";
 		int portNumber = 9991;
 		
 		ConcurrentLinkedQueue<Command> commandQueue = new ConcurrentLinkedQueue<Command>();
@@ -47,8 +49,20 @@ public class Client {
 		    
 		    while(true) {
 		    	while(!commandQueue.isEmpty()) {
-	    			out.writeObject(commandQueue.poll());
-	    			in.readObject();
+		    		if(commandQueue.peek() instanceof ScribbleCellCommand) {
+		    			ArrayList<Point> points = new ArrayList<Point>();
+		    			ScribbleCellCommand scribbleCellCommand = null;
+			    		while(commandQueue.peek() instanceof ScribbleCellCommand) {
+			    			scribbleCellCommand = (ScribbleCellCommand) commandQueue.poll();
+			    			points.add(scribbleCellCommand.getPoint());
+			    		}
+			    		ScribbleCellCommand command = new ScribbleCellCommand(scribbleCellCommand.getX(),scribbleCellCommand.getY(),points);
+			    		out.writeObject(command);
+		    			in.readObject();
+		    		} else {
+		    			out.writeObject(commandQueue.poll());
+		    			in.readObject();
+		    		}
 		    	}
 		    	
 		    	out.writeObject(new PollGameDataCommand());

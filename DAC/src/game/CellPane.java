@@ -137,10 +137,12 @@ public class CellPane extends JPanel {
             
             @Override
             public void mousePressed(MouseEvent e) {
-            	LockCellCommand command = new LockCellCommand(getX(), getY());
-            	commandQueue.add(command);
-            	
-            	System.out.println("Lock: " + getX() + " " + getY());
+            	if(ownerID == -1) {
+	            	LockCellCommand command = new LockCellCommand(getX(), getY());
+	            	commandQueue.add(command);
+	            	
+	            	System.out.println("Lock: " + getX() + " " + getY());
+            	}
 ////            	isModified = true;
 ////            	points.add(e.getPoint());
 ////            	status = 1;
@@ -151,10 +153,12 @@ public class CellPane extends JPanel {
             public void mouseReleased(MouseEvent e) {
 //            	UpdateCellColorCommand command = new UpdateCellColorCommand(e.getPoint().x, e.getPoint().y);
 //            	commandQueue.add(command);
-            	ClearCellColorCommand command = new ClearCellColorCommand(getX(), getY());
-            	commandQueue.add(command);
-            	
-            	System.out.println("Clear: " + getX() + " " + getY());
+//            	if(ownerID == -1) {
+	            	ClearCellColorCommand command = new ClearCellColorCommand(getX(), getY());
+	            	commandQueue.add(command);
+	            	
+	            	System.out.println("Clear: " + getX() + " " + getY());
+//            	}
 //            	isModified = true;
 //            	//setBackground(defaultBackground);
 //            	Dimension d = getSize();

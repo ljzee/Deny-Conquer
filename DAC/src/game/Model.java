@@ -68,7 +68,10 @@ public class Model {
     public ArrayList<PollGameDataCommandResponse> pollGameData() {
 		ArrayList<PollGameDataCommandResponse> gameData = new ArrayList<PollGameDataCommandResponse>();
 		
-		Component[] cells = (Component[])grid.getComponents();
+		Component[] cells = null;
+		synchronized(this) {
+			cells = (Component[])grid.getComponents();
+		}
 		
 		for(Component c : cells) {
 			CellPane cell = (CellPane)c;

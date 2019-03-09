@@ -25,6 +25,12 @@ public class ScribbleCellCommand implements Command {
 		this.point = point;
 	}
 	
+	public ScribbleCellCommand(int x, int y, ArrayList<Point> points) {
+		this.x = x;
+		this.y = y;
+		this.points = new ArrayList<Point>(points);
+	}
+	
 	public int getX() {
 		return x;
 	}
@@ -33,9 +39,9 @@ public class ScribbleCellCommand implements Command {
 		return y;
 	}
 	
-//	public ArrayList<Point> getPoints() {
-//		return points;
-//	}
+	public ArrayList<Point> getPoints() {
+		return points;
+	}
 	
 	public Point getPoint() {
 		return point;

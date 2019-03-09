@@ -27,9 +27,6 @@ import game.Model;
 import game.CellPane;
 import game.Grid;
 
-/**
-* Written by Martin Ombura Jr. <@martinomburajr>
-*/
 public class Server {
 
 	ServerSocket socket;
@@ -113,7 +110,10 @@ public class Server {
 			    
 			    ClientConnection connection = connections.get(command.getConnectionID());
 			    
-			    CellPane cell = (CellPane) model.getGrid().getComponentAt(x, y);
+			    CellPane cell = null;
+			    synchronized(this) {
+			    	cell = (CellPane) model.getGrid().getComponentAt(x, y);
+			    }
 			    
 		    	if(cell.getOwnerID() == -1) {
 		    		cell.setOwnerID(command.getConnectionID());
@@ -130,11 +130,15 @@ public class Server {
 			    
 			    ClientConnection connection = connections.get(command.getConnectionID());
 			    
-			    CellPane cell = (CellPane) model.getGrid().getComponentAt(x, y);
+			    CellPane cell = null;
+			    synchronized(this) {
+			    	cell = (CellPane) model.getGrid().getComponentAt(x, y);
+			    }
 			    
 		    	if(cell.getOwnerID() == command.getConnectionID()) {
-				    cell.getPoints().add(scribbleCellCommand.getPoint());
+				    cell.getPoints().addAll(scribbleCellCommand.getPoints());
 				    cell.repaint();
+		    		System.out.println(cell.getPoints().size() + " " + scribbleCellCommand.getPoints().size());
 				    System.out.println(command.getConnectionID() + " - Successfully scribbled! " + x + " " + y);
 		    	} else {
 		    		System.out.println(command.getConnectionID() + " - Failed scribbled!: client ID: " + cell.getOwnerID() + " has locked this cell.");
@@ -147,7 +151,11 @@ public class Server {
 
 			    ClientConnection connection = connections.get(command.getConnectionID());
 			    
-			    CellPane cell = (CellPane) model.getGrid().getComponentAt(x, y);
+			    CellPane cell = null;
+			    synchronized(this) {
+			    	cell = (CellPane) model.getGrid().getComponentAt(x, y);
+			    }
+
 			    cell.setBackground(connection.playerColor);
 			    System.out.println(command.getConnectionID() + " - Successfully colored! " + x + " " + y);
 			} else if(command instanceof ClearCellColorCommand) {
@@ -156,7 +164,11 @@ public class Server {
 				int x = clearCellColorCommand.getX();
 			    int y = clearCellColorCommand.getY();
 			    
-			    CellPane cell = (CellPane) model.getGrid().getComponentAt(x, y);
+			    CellPane cell = null;
+			    synchronized(this) {
+			    	cell = (CellPane) model.getGrid().getComponentAt(x, y);
+			    }
+
 			    cell.clearCell();
 			    System.out.println(command.getConnectionID() + " - Successfully cleared! " + x + " " + y);
 			}
@@ -169,15 +181,15 @@ public class Server {
     	server.gameInit();
     	
     	
-//    	while(true) {
-//    		server.processCommands();
-//    		try {
-//				TimeUnit.MILLISECONDS.sleep(10);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//    	}
+    	while(true) {
+    		server.processCommands();
+    		try {
+				TimeUnit.MILLISECONDS.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
     	
     }
 }
