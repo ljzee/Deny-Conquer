@@ -60,15 +60,17 @@ public class Client {
 			    		ScribbleCellCommand command = new ScribbleCellCommand(scribbleCellCommand.getX(),scribbleCellCommand.getY(),points);
 			    		out.writeObject(command);
 		    			in.readObject();
+		    			out.reset(); // Reset the stream
 		    		} else {
 		    			out.writeObject(commandQueue.poll());
 		    			in.readObject();
+		    			out.reset(); // Reset the stream
 		    		}
 		    	}
 		    	
 		    	out.writeObject(new PollGameDataCommand());
 		    	ArrayList<PollGameDataCommandResponse> response = (ArrayList<PollGameDataCommandResponse>)in.readObject();
-		    	
+		    	out.reset(); // Reset the stream
 		    	
 		    	for(PollGameDataCommandResponse command : response) {
 		    		CellPane cell = (CellPane) t.getGrid().getComponentAt(command.getX(), command.getY());
