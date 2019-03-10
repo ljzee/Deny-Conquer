@@ -56,6 +56,7 @@ public class ClientConnection extends Thread {
 	public void sendToClient(Object obj) {
 		try {
 			this.ooutstream.writeObject(obj);
+			this.ooutstream.reset(); // Reset the stream
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -79,10 +80,12 @@ public class ClientConnection extends Thread {
 				//I want to move this out, but can't figure out how
 				if(command instanceof PollGameDataCommand) {
 					this.ooutstream.writeObject(server.model.pollGameData());
+					this.ooutstream.reset(); // Reset the stream
 				} else {
 					command.setConnectionID(connectionID);
 					server.commandQueue.add(command);
 					this.ooutstream.writeObject("");
+					this.ooutstream.reset(); // Reset the stream
 				}
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
