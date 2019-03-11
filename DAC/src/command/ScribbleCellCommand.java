@@ -5,7 +5,7 @@ import java.awt.Point;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ScribbleCellCommand implements Command {
+public class ScribbleCellCommand implements GameplayCommands {
 	/**
 	 * 
 	 */

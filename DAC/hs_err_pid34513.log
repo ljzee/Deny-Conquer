@@ -178,9 +178,9 @@ Event: 830.617 Thread 0x00007ff457823800  731   !   4       java.io.ObjectOutput
 Event: 830.732 Thread 0x00007ff457823800 nmethod 731 0x0000000106523190 code [0x0000000106523500, 0x0000000106525518]
 Event: 830.807 Thread 0x00007ff45782f800  732   !   4       java.io.ObjectOutputStream::writeSerialData (221 bytes)
 Event: 830.851 Thread 0x00007ff45782f800 nmethod 732 0x0000000106527b90 code [0x0000000106527ea0, 0x0000000106529da8]
-Event: 831.337 Thread 0x00007ff458085000  733 % !   3       networking.Server::connectToServer @ 81 (283 bytes)
+Event: 831.337 Thread 0x00007ff458085000  733 % !   3       networking.Server.Server::connectToServer @ 81 (283 bytes)
 Event: 831.340 Thread 0x00007ff458085000 nmethod 733% 0x000000010651be90 code [0x000000010651c2e0, 0x000000010651ea58]
-Event: 874.773 Thread 0x00007ff457823800  734 % !   4       networking.Server::connectToServer @ 81 (283 bytes)
+Event: 874.773 Thread 0x00007ff457823800  734 % !   4       networking.Server.Server::connectToServer @ 81 (283 bytes)
 Event: 874.858 Thread 0x00007ff457823800 nmethod 734% 0x0000000106530750 code [0x0000000106530ae0, 0x0000000106532448]
 
 GC Heap History (10 events):
@@ -294,7 +294,7 @@ Deoptimization events (7 events):
 Event: 26.857 Thread 0x00007ff458802000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x0000000106496344 method=java.lang.ref.SoftReference.get()Ljava/lang/Object; @ 17
 Event: 26.858 Thread 0x00007ff458802000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x0000000106470e7c method=java.lang.ref.SoftReference.get()Ljava/lang/Object; @ 17
 Event: 27.935 Thread 0x00007ff4579da800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x00000001064bb5f0 method=java.util.ArrayList.toArray([Ljava/lang/Object;)[Ljava/lang/Object; @ 6
-Event: 830.402 Thread 0x00007ff458802000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x00000001064e3cf8 method=networking.Server.connectToServer()V @ 142
+Event: 830.402 Thread 0x00007ff458802000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x00000001064e3cf8 method=networking.Server.Server.connectToServer()V @ 142
 Event: 830.414 Thread 0x00007ff458802000 Uncommon trap: reason=null_check action=make_not_entrant pc=0x00000001064d2ac4 method=java.io.ObjectStreamClass.lookup(Ljava/lang/Class;Z)Ljava/io/ObjectStreamClass; @ 45
 Event: 830.421 Thread 0x00007ff458802000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x00000001064a0880 method=java.io.ObjectOutputStream.writeObject0(Ljava/lang/Object;Z)V @ 439
 Event: 830.426 Thread 0x00007ff458802000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x000000010648ca28 method=java.io.ObjectStreamClass.getClassDataLayout()[Ljava/io/ObjectStreamClass$ClassDataSlot; @ 4
@@ -629,7 +629,7 @@ Dynamic libraries:
 
 VM Arguments:
 jvm_args: -Dfile.encoding=UTF-8 
-java_command: networking.Server
+java_command: networking.Server.Server
 java_class_path (initial): /Users/dev/Desktop/CMPT 431/cmpt431-IronIV/DAC/bin
 Launcher Type: SUN_STANDARD
 

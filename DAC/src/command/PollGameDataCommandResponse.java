@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 
-public class PollGameDataCommandResponse implements Command {
+public class PollGameDataCommandResponse implements GameplayCommands {
 	/**
 	 * 
 	 */

@@ -3,7 +3,7 @@ package command;
 import java.awt.Color;
 import java.io.Serializable;
 
-public class LockCellCommand implements Command {
+public class LockCellCommand implements GameplayCommands {
 	/**
 	 * 
 	 */

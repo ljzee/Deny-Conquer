@@ -3,7 +3,7 @@ package command;
 import java.awt.Color;
 import java.io.Serializable;
 
-public class UpdateCellColorCommand implements Command {
+public class UpdateCellColorCommand implements GameplayCommands {
 	/**
 	 * 
 	 */

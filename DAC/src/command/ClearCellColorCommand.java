@@ -3,7 +3,7 @@ package command;
 import java.awt.Color;
 import java.io.Serializable;
 
-public class ClearCellColorCommand implements Command {
+public class ClearCellColorCommand implements GameplayCommands {
 	/**
 	 * 
 	 */
