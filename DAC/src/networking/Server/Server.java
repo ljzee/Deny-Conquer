@@ -102,11 +102,13 @@ public class Server {
     }
 
 
-    public static void main(String[] args) {
-        Server server = new Server(9991);
-        server.acceptConnections(3);
-        server.gameInit();
-        server.handleProcessCommand();
+    //    public static void init(String[] args) {
+    public void init() {
+
+//        Server server = new Server(9991);
+        this.acceptConnections(3);
+        this.gameInit();
+        this.handleProcessCommand();
     }
 
 
