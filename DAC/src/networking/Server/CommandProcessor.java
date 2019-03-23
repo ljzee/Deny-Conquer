@@ -36,14 +36,13 @@ public class CommandProcessor {
     }
 
     private static void ScribbleCell(ScribbleCellCommand command, int x, int y, CellPane cell) {
-        var cmd = command;
-        if (cell.getOwnerID() == cmd.getConnectionID()) {
-            cell.getPoints().addAll(cmd.getPoints());
+        if (cell.getOwnerID() == command.getConnectionID()) {
+            cell.getPoints().addAll(command.getPoints());
             cell.repaint();
-            System.out.println(cell.getPoints().size() + " " + cmd.getPoints().size());
-            System.out.println(cmd.getConnectionID() + " - Successfully scribbled! " + x + " " + y);
+            System.out.println(cell.getPoints().size() + " " + command.getPoints().size());
+            System.out.println(command.getConnectionID() + " - Successfully scribbled! " + x + " " + y);
         } else {
-            System.out.println(cmd.getConnectionID() + " - Failed scribbled!: client ID: " + cell.getOwnerID() + " has locked this cell.");
+            System.out.println(command.getConnectionID() + " - Failed scribbled!: client ID: " + cell.getOwnerID() + " has locked this cell.");
         }
     }
 

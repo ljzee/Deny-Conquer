@@ -1,6 +1,8 @@
 package networking.Server;
 
 import java.awt.Color;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -29,8 +31,9 @@ public class ClientConnection extends Thread {
         this.connectionID = connectionID;
 
         try {
-            this.oinstream = new ObjectInputStream(socket.getInputStream());
-            this.ooutstream = new ObjectOutputStream(socket.getOutputStream());
+            this.oinstream = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+            this.ooutstream = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+            this.ooutstream.flush();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -50,6 +53,7 @@ public class ClientConnection extends Thread {
     public void sendToClient(Object obj) {
         try {
             this.ooutstream.writeObject(obj);
+            this.ooutstream.flush();
             this.ooutstream.reset(); // Reset the stream
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -73,11 +77,13 @@ public class ClientConnection extends Thread {
                 //I want to move this out, but can't figure out how
                 if (command instanceof PollGameDataCommand) {
                     this.ooutstream.writeObject(server.model.pollGameData());
+                    this.ooutstream.flush();
                     this.ooutstream.reset(); // Reset the stream
                 } else {
                     command.setConnectionID(connectionID);
                     server.commandQueue.add(command);
-                    this.ooutstream.writeObject("");
+                    this.ooutstream.writeObject(0);
+                    this.ooutstream.flush();
                     this.ooutstream.reset(); // Reset the stream
                 }
             } catch (ClassNotFoundException e) {

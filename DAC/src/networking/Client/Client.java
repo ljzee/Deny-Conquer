@@ -2,6 +2,8 @@ package networking.Client;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -36,13 +38,9 @@ public class Client {
 		try {
 		    Socket echoSocket = new Socket(hostName, portNumber);
 		    
-		    ObjectOutputStream out = new ObjectOutputStream(echoSocket.getOutputStream());
-		    ObjectInputStream in = new ObjectInputStream(echoSocket.getInputStream());
-		    
-		    
-		    BufferedReader stdIn =
-		        new BufferedReader(
-		            new InputStreamReader(System.in));
+		    ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(echoSocket.getOutputStream()));
+		    out.flush(); // flush the stream
+		    ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(echoSocket.getInputStream()));
 		    
 		    //Blocks until server starts a game session in which colors will be assigned to all players, server blocks if not enough connections
 		    Color assignedColor = (Color)in.readObject();
@@ -61,18 +59,22 @@ public class Client {
 			    		}
 			    		ScribbleCellCommand command = new ScribbleCellCommand(scribbleCellCommand.getX(),scribbleCellCommand.getY(),points);
 			    		out.writeObject(command);
-		    			in.readObject();
+			    		out.flush();
 		    			out.reset(); // Reset the stream
+		    			in.readObject();
 		    		} else {
 		    			out.writeObject(commandQueue.poll());
-		    			in.readObject();
+			    		out.flush();
 		    			out.reset(); // Reset the stream
+		    			in.readObject();
 		    		}
 		    	}
 		    	
 		    	out.writeObject(new PollGameDataCommand());
+	    		out.flush();
+    			out.reset(); // Reset the stream
+		    	
 		    	ArrayList<PollGameDataCommandResponse> response = (ArrayList<PollGameDataCommandResponse>)in.readObject();
-		    	out.reset(); // Reset the stream
 		    	
 		    	for(PollGameDataCommandResponse command : response) {
 		    		CellPane cell = (CellPane) t.getGrid().getComponentAt(command.getX(), command.getY());
