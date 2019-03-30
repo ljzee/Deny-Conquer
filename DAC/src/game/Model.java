@@ -105,14 +105,14 @@ public class Model {
     }
     
     
-    public Model(Color color, ConcurrentLinkedQueue<Command> commandQueue, int clientID) {
+    public Model(Color color, ConcurrentLinkedQueue<Command> commandQueue, int clientID, Long offset, Long currentLatency) {
     	try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
         }
 
         frame = new JFrame("Testing");
-        grid = new Grid(color, commandQueue, clientID); 
+        grid = new Grid(color, commandQueue, clientID, offset, currentLatency); 
         
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());

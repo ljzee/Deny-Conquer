@@ -53,6 +53,7 @@ public class Server {
             try {
                 Socket clientSocket = socket.accept();
                 ClientConnection clientConnection = new ClientConnection(clientSocket, this, i);
+                clientConnection.start();
                 connections.add(clientConnection);
                 System.out.println("New connection: " + clientSocket.getRemoteSocketAddress().toString());
                 System.out.println("Number of connections needed: " + (numberOfConnections - this.connections.size()));
@@ -73,7 +74,6 @@ public class Server {
 
     public void beginHandlingClientCommands() {
         for (ClientConnection c : connections) {
-            c.start();
 
             Color color = getUnusedColor();
             c.setColor(color);
@@ -88,14 +88,6 @@ public class Server {
         this.model = new Model(getUnusedColor());
         this.done = false;
         beginHandlingClientCommands();
-    }
-
-    public void syncClientTimes() {
-    	for(ClientConnection c : connections) {
-            for(int i = 0; i < 50; i++) {
-            	c.sendToClient(System.currentTimeMillis());
-            }
-    	}
     }
     
     public void handleProcessCommand() {

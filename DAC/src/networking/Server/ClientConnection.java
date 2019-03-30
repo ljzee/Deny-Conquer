@@ -17,9 +17,10 @@ public class ClientConnection extends Thread {
     Socket socket;
     ObjectInputStream oinstream;
     ObjectOutputStream ooutstream;
-
+    
     Boolean playerHasQuit;
-
+    Boolean isSynced;
+    
     Color playerColor;
 
     int connectionID;
@@ -40,6 +41,7 @@ public class ClientConnection extends Thread {
         }
 
         playerHasQuit = false;
+        isSynced = false;
     }
 
     public void setConnectionID(int connectionID) {
@@ -65,10 +67,30 @@ public class ClientConnection extends Thread {
         this.playerColor = color;
     }
 
+    public void syncPlayer() {
+    	while(!this.playerHasQuit && !this.isSynced) {
+    		try {
+				String request = (String) this.oinstream.readObject();
+				if (request.equals("time")) {
+                    this.ooutstream.writeObject(System.currentTimeMillis());
+                    this.ooutstream.flush();
+                    this.ooutstream.reset(); // Reset the stream
+				} else if (request.contentEquals("synced")){
+					this.isSynced = true;
+			        System.out.println(connectionID + " is Synced");
+				}
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+    }
+    
     public void handlePlayerCommands() {
         //move this to server
-
-
         while (!this.playerHasQuit /* && !this.server.done*/) {
             Command command = null;
             try {
@@ -98,6 +120,7 @@ public class ClientConnection extends Thread {
 
     public void run() {
 
+    	syncPlayer();
         handlePlayerCommands();
 
     }

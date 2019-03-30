@@ -29,8 +29,12 @@ public class Client {
 //		String hostName = args[0];
 //		int portNumber = Integer.parseInt(args[1]);
 		
-		String hostName = "127.0.0.1";
+		String hostName = "192.168.0.2";
 		int portNumber = 9991;
+		
+		int syncIteration = 50;
+		Long currentLatency = new Long(0);
+		Long offset = new Long(0); //offset between client time (currentTimeMillis) and server time
 		
 		ConcurrentLinkedQueue<Command> commandQueue = new ConcurrentLinkedQueue<Command>();
 
@@ -41,25 +45,35 @@ public class Client {
 		    ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(echoSocket.getOutputStream()));
 		    out.flush(); // flush the stream
 		    ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(echoSocket.getInputStream()));
-		    /*
-		    for(int i = 0; i < 50; i++) {
+		    
+		    long cumulativeOffset = 0;
+		    for(int i = 0; i < syncIteration; i++) {
 		    	
+		    	//measuring RTT
 			    long start = System.currentTimeMillis();
-			    long systemTimeInMs = (long)in.readObject();
-			    long end = System.currentTimeMillis();
-			    long duration = end - start;
-			    //System.out.println(i + " System time(ms): " + systemTimeInMs);
-			    //System.out.println(i + " Client time(ms): " + end);
-			    //System.out.println(i + " Delivery duration(ms): " + duration);
-			    System.out.println(i + " Difference(ms): " + (systemTimeInMs - end));
+			    
+			    out.writeObject("time");
+	    		out.flush();
+    			out.reset(); // Reset the stream
+    			long systemTimeInMs = (long)in.readObject();
+			    
+    			long stop = System.currentTimeMillis();
+    			
+    			currentLatency = (stop - start)/2;
+    			cumulativeOffset = cumulativeOffset + (systemTimeInMs + currentLatency - stop);
+    			
 		    }
-		    */
+		    offset = cumulativeOffset/syncIteration;
+		    out.writeObject("synced");
+    		out.flush();
+			out.reset(); // Reset the stream
+		    
 		    //Blocks until server starts a game session in which colors will be assigned to all players, server blocks if not enough connections
 		    Color assignedColor = (Color)in.readObject();
 		    int clientID = (int)in.readObject();
 		  
 		    
-		    Model t = new Model(assignedColor, commandQueue, clientID);
+		    Model t = new Model(assignedColor, commandQueue, clientID, offset, currentLatency);
 		    
 		    while(true) {
 		    	if(!commandQueue.isEmpty()) {
@@ -84,11 +98,15 @@ public class Client {
 		    		}
 		    	}
 		    	
+		    	long start = System.currentTimeMillis();
 		    	out.writeObject(new PollGameDataCommand());
 	    		out.flush();
     			out.reset(); // Reset the stream
 		    	
 		    	ArrayList<PollGameDataCommandResponse> response = (ArrayList<PollGameDataCommandResponse>)in.readObject();
+		    	long stop = System.currentTimeMillis();
+		    	
+		    	currentLatency = (stop - start)/2;
 		    	
 		    	for(PollGameDataCommandResponse command : response) {
 		    		CellPane cell = (CellPane) t.getGrid().getComponentAt(command.getX(), command.getY());

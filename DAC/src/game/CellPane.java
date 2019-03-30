@@ -115,7 +115,7 @@ public class CellPane extends JPanel {
 //    	});
     }
     
-    public CellPane(Color color, ConcurrentLinkedQueue<Command> commandQueue, int clientID) {
+    public CellPane(Color color, ConcurrentLinkedQueue<Command> commandQueue, int clientID, Long offset, Long currentLatency) {
     	status = 0;
     	points = new ArrayList<Point>();
     	defaultBackground = getBackground();
@@ -142,7 +142,8 @@ public class CellPane extends JPanel {
             @Override
             public void mousePressed(MouseEvent e) {
             	if(ownerID == -1 && !done) {
-	            	LockCellCommand command = new LockCellCommand(getX(), getY(), System.currentTimeMillis());
+            		long timestamp = System.currentTimeMillis() + offset.longValue() + currentLatency.longValue();
+	            	LockCellCommand command = new LockCellCommand(getX(), getY(), timestamp);
 	            	commandQueue.add(command);
 	            	
 	            	System.out.println("Lock: " + getX() + " " + getY());
@@ -158,7 +159,8 @@ public class CellPane extends JPanel {
 //            	UpdateCellColorCommand command = new UpdateCellColorCommand(e.getPoint().x, e.getPoint().y);
 //            	commandQueue.add(command);
             	if((ownerID == -1 || ownerID == clientID) && !done) {
-	            	ClearCellColorCommand command = new ClearCellColorCommand(getX(), getY(), System.currentTimeMillis());
+            		long timestamp = System.currentTimeMillis() + offset.longValue() + currentLatency.longValue();
+	            	ClearCellColorCommand command = new ClearCellColorCommand(getX(), getY(), timestamp);
 	            	commandQueue.add(command);
 	            	
 	            	System.out.println("Clear: " + getX() + " " + getY());
@@ -207,7 +209,8 @@ public class CellPane extends JPanel {
 	        @Override
 	        public void mouseDragged(MouseEvent e) {
 	        	if((ownerID == -1 || ownerID == clientID) && !done) {
-		        	ScribbleCellCommand command = new ScribbleCellCommand(getX(), getY(), e.getPoint(), System.currentTimeMillis());
+            		long timestamp = System.currentTimeMillis() + offset.longValue() + currentLatency.longValue();
+		        	ScribbleCellCommand command = new ScribbleCellCommand(getX(), getY(), e.getPoint(), timestamp);
 		        	commandQueue.add(command);
 		        	System.out.println("drag: " + getX() + " " + getY());
 	        	}
