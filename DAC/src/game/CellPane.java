@@ -32,6 +32,9 @@ public class CellPane extends JPanel {
     private ConcurrentLinkedQueue<Command> commandQueue;
     private int clientID;
     private boolean done;
+    private Long offset; 
+    private Long currentLatency;
+    private long currentLockTimestamp;
 
     public CellPane(Color color) {
     	status = 0;
@@ -41,6 +44,9 @@ public class CellPane extends JPanel {
     	isModified = false;
     	ownerID = -1;
     	this.done = false;
+    	this.offset = new Long(0);
+    	this.currentLatency = new Long(0);
+    	this.currentLockTimestamp = 0;
 
 //    	addMouseListener(new MouseAdapter() {
 //            @Override
@@ -125,6 +131,9 @@ public class CellPane extends JPanel {
     	this.commandQueue = commandQueue;
     	this.clientID = clientID;
     	this.done = false;
+    	this.offset = offset;
+    	this.currentLatency = currentLatency;
+    	this.currentLockTimestamp = 0;
     	
     	addMouseListener(new MouseAdapter() {
             @Override
@@ -289,6 +298,14 @@ public class CellPane extends JPanel {
     	this.ownerID = id;
     }
     
+    public long getCurrentLockTimestamp() {
+    	return this.currentLockTimestamp;
+    }
+   
+    public void setCurrentLockTimestamp(long timestamp) {
+    	this.currentLockTimestamp = timestamp;
+    }
+    
     public ArrayList<Point> getPoints() {
     	return points;
     }
@@ -334,6 +351,7 @@ public class CellPane extends JPanel {
     
     public void clearCell() {
     	ownerID = -1;
+    	currentLockTimestamp = 0;
 		points.clear();
 		repaint();
     }

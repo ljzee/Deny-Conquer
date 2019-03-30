@@ -49,7 +49,7 @@ public class CommandProcessor {
     }
 
     private static void LockCell(GameplayCommands command, int x, int y, ClientConnection connection, CellPane cell) {
-        if (cell.getOwnerID() == -1) {
+        if (cell.getOwnerID() == -1 || (command.getTimeStamp() < cell.getCurrentLockTimestamp())) {
             cell.setOwnerID(command.getConnectionID());
             cell.setColor(connection.playerColor);
             System.out.println(command.getConnectionID() + " Lock TS: " + command.getTimeStamp());
