@@ -41,23 +41,37 @@ public class Client {
 		    ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(echoSocket.getOutputStream()));
 		    out.flush(); // flush the stream
 		    ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(echoSocket.getInputStream()));
-		    
+		    /*
+		    for(int i = 0; i < 50; i++) {
+		    	
+			    long start = System.currentTimeMillis();
+			    long systemTimeInMs = (long)in.readObject();
+			    long end = System.currentTimeMillis();
+			    long duration = end - start;
+			    //System.out.println(i + " System time(ms): " + systemTimeInMs);
+			    //System.out.println(i + " Client time(ms): " + end);
+			    //System.out.println(i + " Delivery duration(ms): " + duration);
+			    System.out.println(i + " Difference(ms): " + (systemTimeInMs - end));
+		    }
+		    */
 		    //Blocks until server starts a game session in which colors will be assigned to all players, server blocks if not enough connections
 		    Color assignedColor = (Color)in.readObject();
 		    int clientID = (int)in.readObject();
+		  
 		    
 		    Model t = new Model(assignedColor, commandQueue, clientID);
 		    
 		    while(true) {
 		    	if(!commandQueue.isEmpty()) {
 		    		if(commandQueue.peek() instanceof ScribbleCellCommand) {
+		    			long initialTimestamp = commandQueue.peek().getTimeStamp();
 		    			ArrayList<Point> points = new ArrayList<Point>();
 		    			ScribbleCellCommand scribbleCellCommand = null;
 			    		while(commandQueue.peek() instanceof ScribbleCellCommand) {
 			    			scribbleCellCommand = (ScribbleCellCommand) commandQueue.poll();
 			    			points.add(scribbleCellCommand.getPoint());
 			    		}
-			    		ScribbleCellCommand command = new ScribbleCellCommand(scribbleCellCommand.getX(),scribbleCellCommand.getY(),points);
+			    		ScribbleCellCommand command = new ScribbleCellCommand(scribbleCellCommand.getX(),scribbleCellCommand.getY(),points,initialTimestamp);
 			    		out.writeObject(command);
 			    		out.flush();
 		    			out.reset(); // Reset the stream

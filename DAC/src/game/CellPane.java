@@ -142,7 +142,7 @@ public class CellPane extends JPanel {
             @Override
             public void mousePressed(MouseEvent e) {
             	if(ownerID == -1 && !done) {
-	            	LockCellCommand command = new LockCellCommand(getX(), getY());
+	            	LockCellCommand command = new LockCellCommand(getX(), getY(), System.currentTimeMillis());
 	            	commandQueue.add(command);
 	            	
 	            	System.out.println("Lock: " + getX() + " " + getY());
@@ -158,7 +158,7 @@ public class CellPane extends JPanel {
 //            	UpdateCellColorCommand command = new UpdateCellColorCommand(e.getPoint().x, e.getPoint().y);
 //            	commandQueue.add(command);
             	if((ownerID == -1 || ownerID == clientID) && !done) {
-	            	ClearCellColorCommand command = new ClearCellColorCommand(getX(), getY());
+	            	ClearCellColorCommand command = new ClearCellColorCommand(getX(), getY(), System.currentTimeMillis());
 	            	commandQueue.add(command);
 	            	
 	            	System.out.println("Clear: " + getX() + " " + getY());
@@ -207,7 +207,7 @@ public class CellPane extends JPanel {
 	        @Override
 	        public void mouseDragged(MouseEvent e) {
 	        	if((ownerID == -1 || ownerID == clientID) && !done) {
-		        	ScribbleCellCommand command = new ScribbleCellCommand(getX(), getY(), e.getPoint());
+		        	ScribbleCellCommand command = new ScribbleCellCommand(getX(), getY(), e.getPoint(), System.currentTimeMillis());
 		        	commandQueue.add(command);
 		        	System.out.println("drag: " + getX() + " " + getY());
 	        	}

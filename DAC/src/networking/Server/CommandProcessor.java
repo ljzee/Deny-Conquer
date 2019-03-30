@@ -26,10 +26,11 @@ public class CommandProcessor {
                     cell.setOwnerID(ownerID);
                     cell.setBackground(connection.playerColor);
                     cell.setDone(true);
-                    System.out.println(command.getConnectionID() + " - Successfully colored! " + x + " " + y);
+                    System.out.println(command.getConnectionID() + " Clear TS: " + command.getTimeStamp());
+                    //System.out.println(command.getConnectionID() + " - Successfully colored! " + x + " " + y);
                 } else {
                     cell.clearCell();
-                    System.out.println(command.getConnectionID() + " - Successfully cleared! " + x + " " + y);
+                    //System.out.println(command.getConnectionID() + " - Successfully cleared! " + x + " " + y);
                 }
             }
         }
@@ -39,10 +40,11 @@ public class CommandProcessor {
         if (cell.getOwnerID() == command.getConnectionID()) {
             cell.getPoints().addAll(command.getPoints());
             cell.repaint();
-            System.out.println(cell.getPoints().size() + " " + command.getPoints().size());
-            System.out.println(command.getConnectionID() + " - Successfully scribbled! " + x + " " + y);
+            System.out.println(command.getConnectionID() + " Scribble TS: " + command.getTimeStamp());
+            //System.out.println(cell.getPoints().size() + " " + command.getPoints().size());
+            //System.out.println(command.getConnectionID() + " - Successfully scribbled! " + x + " " + y);
         } else {
-            System.out.println(command.getConnectionID() + " - Failed scribbled!: client ID: " + cell.getOwnerID() + " has locked this cell.");
+            //System.out.println(command.getConnectionID() + " - Failed scribbled!: client ID: " + cell.getOwnerID() + " has locked this cell.");
         }
     }
 
@@ -50,9 +52,10 @@ public class CommandProcessor {
         if (cell.getOwnerID() == -1) {
             cell.setOwnerID(command.getConnectionID());
             cell.setColor(connection.playerColor);
-            System.out.println(command.getConnectionID() + " - Successfully locked! " + x + " " + y);
+            System.out.println(command.getConnectionID() + " Lock TS: " + command.getTimeStamp());
+            //System.out.println(command.getConnectionID() + " - Successfully locked! " + x + " " + y);
         } else {
-            System.out.println(command.getConnectionID() + " - Failed lock!: client ID: " + cell.getOwnerID() + " has already locked this cell.");
+            //System.out.println(command.getConnectionID() + " - Failed lock!: client ID: " + cell.getOwnerID() + " has already locked this cell.");
         }
     }
 }

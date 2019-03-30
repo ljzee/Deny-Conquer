@@ -80,6 +80,7 @@ public class Server {
             c.sendToClient(color);
 
             c.sendToClient(c.getConnectionID());
+            
         }
     }
 
@@ -89,6 +90,14 @@ public class Server {
         beginHandlingClientCommands();
     }
 
+    public void syncClientTimes() {
+    	for(ClientConnection c : connections) {
+            for(int i = 0; i < 50; i++) {
+            	c.sendToClient(System.currentTimeMillis());
+            }
+    	}
+    }
+    
     public void handleProcessCommand() {
         while (true) {
             CommandProcessor.processCommands(commandQueue, connections, model);
@@ -101,12 +110,12 @@ public class Server {
         }
     }
 
-
     //    public static void init(String[] args) {
     public void init() {
 
 //        Server server = new Server(9991);
         this.acceptConnections(3);
+        //this.syncClientTimes();
         this.gameInit();
         this.handleProcessCommand();
     }

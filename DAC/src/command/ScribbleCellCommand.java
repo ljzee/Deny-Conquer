@@ -12,23 +12,26 @@ public class ScribbleCellCommand implements GameplayCommands {
 	int connectionID = -1;
 	ArrayList<Point> points;
 	Point point;
+	long timestamp;
 	
 	private static final long serialVersionUID = 1146724334964356307L;
 	
 	int x;
 	int y;
 	
-	public ScribbleCellCommand(int x, int y, Point point) {
+	public ScribbleCellCommand(int x, int y, Point point, long timestamp) {
 		this.x = x;
 		this.y = y;
 		//this.points = new ArrayList<Point>(points);
 		this.point = point;
+		this.timestamp = timestamp;
 	}
 	
-	public ScribbleCellCommand(int x, int y, ArrayList<Point> points) {
+	public ScribbleCellCommand(int x, int y, ArrayList<Point> points, long timestamp) {
 		this.x = x;
 		this.y = y;
 		this.points = new ArrayList<Point>(points);
+		this.timestamp = timestamp;
 	}
 	
 	public int getX() {
@@ -49,13 +52,13 @@ public class ScribbleCellCommand implements GameplayCommands {
 
 
 
-	public int getTimeStamp() {
-		return 0;
+	public long getTimeStamp() {
+		return this.timestamp;
 	}
 	
-	public void setTimeStamp(int timeStamp) {
+	public void setTimeStamp(long timeStamp) {
 		// TODO Auto-generated method stub
-		
+		this.timestamp = timeStamp;
 	}
 
 	public int getConnectionID() {
