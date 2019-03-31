@@ -107,7 +107,12 @@ public class Server {
 
 //        Server server = new Server(9991);
         this.acceptConnections(3);
-        //this.syncClientTimes();
+        try {
+			TimeUnit.SECONDS.sleep(1); //to ensure clock synchronization tasks are done
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         this.gameInit();
         this.handleProcessCommand();
     }

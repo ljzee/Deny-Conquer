@@ -32,8 +32,8 @@ public class Client {
 		String hostName = "192.168.0.2";
 		int portNumber = 9991;
 		
-		int syncIteration = 50;
-		Long currentLatency = new Long(0);
+		int syncIteration = 50; //number of iterations to run in the initial clock synchronization process
+		Long currentLatency = new Long(0); //updated by timing PollGameDataCommand
 		Long offset = new Long(0); //offset between client time (currentTimeMillis) and server time
 		
 		ConcurrentLinkedQueue<Command> commandQueue = new ConcurrentLinkedQueue<Command>();
@@ -63,7 +63,7 @@ public class Client {
     			cumulativeOffset = cumulativeOffset + (systemTimeInMs + currentLatency - stop);
     			
 		    }
-		    offset = cumulativeOffset/syncIteration;
+		    offset = cumulativeOffset/syncIteration; //average offset is calculated and used for future
 		    out.writeObject("synced");
     		out.flush();
 			out.reset(); // Reset the stream
