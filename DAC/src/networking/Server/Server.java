@@ -53,6 +53,7 @@ public class Server {
             try {
                 Socket clientSocket = socket.accept();
                 ClientConnection clientConnection = new ClientConnection(clientSocket, this, i);
+                clientConnection.start();
                 connections.add(clientConnection);
                 System.out.println("New connection: " + clientSocket.getRemoteSocketAddress().toString());
                 System.out.println("Number of connections needed: " + (numberOfConnections - this.connections.size()));
@@ -73,13 +74,13 @@ public class Server {
 
     public void beginHandlingClientCommands() {
         for (ClientConnection c : connections) {
-            c.start();
 
             Color color = getUnusedColor();
             c.setColor(color);
             c.sendToClient(color);
 
             c.sendToClient(c.getConnectionID());
+            
         }
     }
 
@@ -88,7 +89,7 @@ public class Server {
         this.done = false;
         beginHandlingClientCommands();
     }
-
+    
     public void handleProcessCommand() {
         while (true) {
             CommandProcessor.processCommands(commandQueue, connections, model);
@@ -101,12 +102,17 @@ public class Server {
         }
     }
 
-
     //    public static void init(String[] args) {
     public void init() {
 
 //        Server server = new Server(9991);
         this.acceptConnections(3);
+        try {
+			TimeUnit.SECONDS.sleep(1); //to ensure clock synchronization tasks are done
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         this.gameInit();
         this.handleProcessCommand();
     }

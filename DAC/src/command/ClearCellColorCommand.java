@@ -13,10 +13,12 @@ public class ClearCellColorCommand implements GameplayCommands {
 	
 	int x;
 	int y;
+	long timestamp;
 	
-	public ClearCellColorCommand(int x, int y) {
+	public ClearCellColorCommand(int x, int y, long timestamp) {
 		this.x = x;
 		this.y = y;
+		this.timestamp = timestamp;
 	}
 	
 	public int getX() {
@@ -28,12 +30,13 @@ public class ClearCellColorCommand implements GameplayCommands {
 	}
 
 
-	public int getTimeStamp() {
-		return 0;
+	public long getTimeStamp() {
+		return this.timestamp;
 	}
 	
-	public void setTimeStamp(int timeStamp) {
+	public void setTimeStamp(long timeStamp) {
 		// TODO Auto-generated method stub
+		this.timestamp = timeStamp;
 		
 	}
 

@@ -32,6 +32,9 @@ public class CellPane extends JPanel {
     private ConcurrentLinkedQueue<Command> commandQueue;
     private int clientID;
     private boolean done;
+    private Long offset; 
+    private Long currentLatency;
+    private long currentLockTimestamp;
 
     public CellPane(Color color) {
     	status = 0;
@@ -41,6 +44,9 @@ public class CellPane extends JPanel {
     	isModified = false;
     	ownerID = -1;
     	this.done = false;
+    	this.offset = new Long(0);
+    	this.currentLatency = new Long(0);
+    	this.currentLockTimestamp = 0;
 
 //    	addMouseListener(new MouseAdapter() {
 //            @Override
@@ -115,7 +121,7 @@ public class CellPane extends JPanel {
 //    	});
     }
     
-    public CellPane(Color color, ConcurrentLinkedQueue<Command> commandQueue, int clientID) {
+    public CellPane(Color color, ConcurrentLinkedQueue<Command> commandQueue, int clientID, Long offset, Long currentLatency) {
     	status = 0;
     	points = new ArrayList<Point>();
     	defaultBackground = getBackground();
@@ -125,6 +131,9 @@ public class CellPane extends JPanel {
     	this.commandQueue = commandQueue;
     	this.clientID = clientID;
     	this.done = false;
+    	this.offset = offset;
+    	this.currentLatency = currentLatency;
+    	this.currentLockTimestamp = 0;
     	
     	addMouseListener(new MouseAdapter() {
             @Override
@@ -142,7 +151,8 @@ public class CellPane extends JPanel {
             @Override
             public void mousePressed(MouseEvent e) {
             	if(ownerID == -1 && !done) {
-	            	LockCellCommand command = new LockCellCommand(getX(), getY());
+            		long timestamp = System.currentTimeMillis() + offset.longValue() + currentLatency.longValue();
+	            	LockCellCommand command = new LockCellCommand(getX(), getY(), timestamp);
 	            	commandQueue.add(command);
 	            	
 	            	System.out.println("Lock: " + getX() + " " + getY());
@@ -158,7 +168,8 @@ public class CellPane extends JPanel {
 //            	UpdateCellColorCommand command = new UpdateCellColorCommand(e.getPoint().x, e.getPoint().y);
 //            	commandQueue.add(command);
             	if((ownerID == -1 || ownerID == clientID) && !done) {
-	            	ClearCellColorCommand command = new ClearCellColorCommand(getX(), getY());
+            		long timestamp = System.currentTimeMillis() + offset.longValue() + currentLatency.longValue();
+	            	ClearCellColorCommand command = new ClearCellColorCommand(getX(), getY(), timestamp);
 	            	commandQueue.add(command);
 	            	
 	            	System.out.println("Clear: " + getX() + " " + getY());
@@ -207,7 +218,8 @@ public class CellPane extends JPanel {
 	        @Override
 	        public void mouseDragged(MouseEvent e) {
 	        	if((ownerID == -1 || ownerID == clientID) && !done) {
-		        	ScribbleCellCommand command = new ScribbleCellCommand(getX(), getY(), e.getPoint());
+            		long timestamp = System.currentTimeMillis() + offset.longValue() + currentLatency.longValue();
+		        	ScribbleCellCommand command = new ScribbleCellCommand(getX(), getY(), e.getPoint(), timestamp);
 		        	commandQueue.add(command);
 		        	System.out.println("drag: " + getX() + " " + getY());
 	        	}
@@ -286,6 +298,14 @@ public class CellPane extends JPanel {
     	this.ownerID = id;
     }
     
+    public long getCurrentLockTimestamp() {
+    	return this.currentLockTimestamp;
+    }
+   
+    public void setCurrentLockTimestamp(long timestamp) {
+    	this.currentLockTimestamp = timestamp;
+    }
+    
     public ArrayList<Point> getPoints() {
     	return points;
     }
@@ -331,6 +351,7 @@ public class CellPane extends JPanel {
     
     public void clearCell() {
     	ownerID = -1;
+    	currentLockTimestamp = 0;
 		points.clear();
 		repaint();
     }

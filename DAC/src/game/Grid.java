@@ -44,7 +44,7 @@ public class Grid extends JPanel {
         }
     }
     
-    public Grid(Color color, ConcurrentLinkedQueue<Command> commandQueue, int clientID) {
+    public Grid(Color color, ConcurrentLinkedQueue<Command> commandQueue, int clientID, Long offset, Long currentLatency) {
         setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -53,7 +53,7 @@ public class Grid extends JPanel {
                 gbc.gridx = col;
                 gbc.gridy = row;
 
-                CellPane cellPane = new CellPane(color, commandQueue, clientID);
+                CellPane cellPane = new CellPane(color, commandQueue, clientID, offset, currentLatency);
                 Border border = null;
                 if (row < 4) {
                     if (col < 4) {

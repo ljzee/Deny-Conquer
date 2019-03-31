@@ -28,11 +28,11 @@ public class UpdateCellColorCommand implements GameplayCommands {
 	}
 
 
-	public int getTimeStamp() {
+	public long getTimeStamp() {
 		return 0;
 	}
 	
-	public void setTimeStamp(int timeStamp) {
+	public void setTimeStamp(long timeStamp) {
 		// TODO Auto-generated method stub
 		
 	}
