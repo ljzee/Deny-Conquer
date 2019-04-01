@@ -2,6 +2,8 @@ package main;
 
 import networking.Client.*;
 
+import java.io.*;
+
 public class ClientGame implements IGame {
     private Client client;
 
@@ -10,7 +12,7 @@ public class ClientGame implements IGame {
     }
 
     @Override
-    public void run() {
+    public void run() throws IOException {
         client.init();
     }
 }

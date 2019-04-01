@@ -13,7 +13,6 @@ public class UserInput {
                     return mode;
                 }
                 System.out.println("Option does not exist, please enter again");
-                continue;
             } catch (NumberFormatException ex) {
                 System.out.println("Input is invalid, please enter again");
             }

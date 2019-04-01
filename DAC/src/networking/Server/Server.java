@@ -8,27 +8,29 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
-import command.ClearCellColorCommand;
 import command.Command;
-import command.LockCellCommand;
-import command.ScribbleCellCommand;
 import game.Model;
-import game.CellPane;
 
 public class Server {
 
-    ServerSocket socket;
+    public ServerSocket socket;
     ArrayList<ClientConnection> connections;
-
+    Integer NumberOfConnections;
     Model model;
     Boolean done;
+    Boolean isReconnect;
 
     ArrayList<Color> unusedColors;
     ArrayList<Color> usedColors;
 
+    ArrayList<String> clientAddresses;
+
     ConcurrentLinkedQueue<Command> commandQueue = new ConcurrentLinkedQueue<Command>();
 
-    public Server(int port) {
+    public Server(Model model, int port, int numOfConnections) {
+        System.out.println(numOfConnections);
+        this.NumberOfConnections = numOfConnections;
+        this.model = new Model(model);
         this.connections = new ArrayList<ClientConnection>();
         try {
             this.socket = new ServerSocket(port);
@@ -36,6 +38,20 @@ public class Server {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        this.clientAddresses = new ArrayList<String>();
+    }
+
+    public Server(int port) {
+        this.NumberOfConnections = 4;
+
+        this.connections = new ArrayList<ClientConnection>();
+        try {
+            this.socket = new ServerSocket(port);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        this.clientAddresses = new ArrayList<String>();
 
         this.usedColors = new ArrayList<Color>();
         this.unusedColors = new ArrayList<Color>();
@@ -44,6 +60,7 @@ public class Server {
         this.unusedColors.add(Color.RED);
         this.unusedColors.add(Color.YELLOW);
         this.unusedColors.add(Color.GREEN);
+        this.unusedColors.add(Color.DARK_GRAY);
     }
 
     public void acceptConnections(int numberOfConnections) {
@@ -55,6 +72,7 @@ public class Server {
                 ClientConnection clientConnection = new ClientConnection(clientSocket, this, i);
                 clientConnection.start();
                 connections.add(clientConnection);
+                clientAddresses.add(clientSocket.getRemoteSocketAddress().toString());
                 System.out.println("New connection: " + clientSocket.getRemoteSocketAddress().toString());
                 System.out.println("Number of connections needed: " + (numberOfConnections - this.connections.size()));
             } catch (IOException e) {
@@ -66,6 +84,7 @@ public class Server {
     }
 
     public Color getUnusedColor() {
+//        System.out.println(unusedColors.size() - 1);
         Color color = unusedColors.get(unusedColors.size() - 1);
         unusedColors.remove(unusedColors.size() - 1);
         usedColors.add(color);
@@ -74,13 +93,14 @@ public class Server {
 
     public void beginHandlingClientCommands() {
         for (ClientConnection c : connections) {
+            if(!this.isReconnect){
+                Color color = getUnusedColor();
+                c.setColor(color);
+                c.sendToClient(color);
 
-            Color color = getUnusedColor();
-            c.setColor(color);
-            c.sendToClient(color);
-
-            c.sendToClient(c.getConnectionID());
-            
+                c.sendToClient(c.getConnectionID());
+            }
+            c.sendToClient( new ArrayList<String>(clientAddresses.subList(1, clientAddresses.size())));
         }
     }
 
@@ -89,9 +109,10 @@ public class Server {
         this.done = false;
         beginHandlingClientCommands();
     }
-    
+
+
     public void handleProcessCommand() {
-        while (true) {
+        while (connections.size() != 0) {
             CommandProcessor.processCommands(commandQueue, connections, model);
             try {
                 TimeUnit.MILLISECONDS.sleep(5);
@@ -100,22 +121,32 @@ public class Server {
                 e.printStackTrace();
             }
         }
+        System.out.println("All clients have quited, game terminated.");
+        System.exit(0);
     }
 
     //    public static void init(String[] args) {
-    public void init() {
+    public void init(Boolean isReconnect) {
 
 //        Server server = new Server(9991);
-        this.acceptConnections(3);
+        this.isReconnect = isReconnect;
+        this.acceptConnections(this.NumberOfConnections);
         try {
-			TimeUnit.SECONDS.sleep(1); //to ensure clock synchronization tasks are done
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        this.gameInit();
+            TimeUnit.SECONDS.sleep(1); //to ensure clock synchronization tasks are done
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
+        if (!this.isReconnect) {
+            this.gameInit();
+        }
+        else{
+            beginHandlingClientCommands();
+        }
+        System.out.println(clientAddresses);
         this.handleProcessCommand();
     }
-
 
 }

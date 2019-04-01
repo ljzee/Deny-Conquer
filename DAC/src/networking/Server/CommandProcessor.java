@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class CommandProcessor {
     public static void processCommands(ConcurrentLinkedQueue<Command> commandQueue, ArrayList<ClientConnection> connections, Model model) {
         while (!commandQueue.isEmpty()) {
+            System.out.println("Check");
             GameplayCommands command = (GameplayCommands) commandQueue.poll();
             int x = command.getX();
             int y = command.getY();
@@ -21,19 +22,23 @@ public class CommandProcessor {
                 ScribbleCell((ScribbleCellCommand) command, x, y, cell);
             } else if (command instanceof ClearCellColorCommand) {
                 if (cell.reachedColoredThreshold()) {
-                    int ownerID = cell.getOwnerID();
-                    cell.clearCell();
-                    cell.setOwnerID(ownerID);
-                    cell.setBackground(connection.playerColor);
-                    cell.setDone(true);
-                    System.out.println(command.getConnectionID() + " Clear TS: " + command.getTimeStamp());
-                    //System.out.println(command.getConnectionID() + " - Successfully colored! " + x + " " + y);
+                    ReachColorThreshold(command, connection, cell);
                 } else {
                     cell.clearCell();
                     //System.out.println(command.getConnectionID() + " - Successfully cleared! " + x + " " + y);
                 }
             }
         }
+    }
+
+    private static void ReachColorThreshold(GameplayCommands command, ClientConnection connection, CellPane cell) {
+        int ownerID = cell.getOwnerID();
+        cell.clearCell();
+        cell.setOwnerID(ownerID);
+        cell.setBackground(connection.playerColor);
+        cell.setDone(true);
+        System.out.println(command.getConnectionID() + " Clear TS: " + command.getTimeStamp());
+        //System.out.println(command.getConnectionID() + " - Successfully colored! " + x + " " + y);
     }
 
     private static void ScribbleCell(ScribbleCellCommand command, int x, int y, CellPane cell) {

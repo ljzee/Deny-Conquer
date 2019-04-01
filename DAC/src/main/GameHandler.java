@@ -1,12 +1,12 @@
 package main;
 
-public class GameHandler {
-    public static LocalGameSession handleGameMode(int mode) {
+class GameHandler {
+    static LocalGameSession handleGameMode(int mode) {
         LocalGameSession gs;
         IGame game;
 
         if (mode == 1) {
-            game = new ServerGame();
+            game = new ServerGame(9991);
         } else {
             game = new ClientGame();
         }

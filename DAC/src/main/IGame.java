@@ -1,5 +1,7 @@
 package main;
 
+import java.io.IOException;
+
 public interface IGame {
-    public void run();
+    void run () throws IOException;
 }

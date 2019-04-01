@@ -93,7 +93,7 @@ public class Model {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
         }
 
-        frame = new JFrame("Testing");
+        frame = new JFrame("TestingServer");
         grid = new Grid(color); 
         
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -121,7 +121,39 @@ public class Model {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
-    
+
+    public Model(Model model) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+        }
+
+        frame = new JFrame("Server");
+        grid = new Grid(Color.BLACK);
+
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
+        frame.add(grid);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+
+        Component[] newCells = (Component[])grid.getComponents();
+        Component[] oldCells = (Component[])model.grid.getComponents();
+
+        for(int i = 0; i < oldCells.length; ++i) {
+            CellPane oldCell = (CellPane)oldCells[i];
+            CellPane newCell = (CellPane)newCells[i];
+
+            newCell.setBackground(oldCell.getBackground());
+            newCell.setColor(oldCell.getColor());
+            newCell.setPoints(oldCell.getPoints());
+            newCell.setOwnerID(oldCell.getOwnerID());
+            newCell.setDone(oldCell.getDone());
+            newCell.repaint();
+        }
+    }
+
     public JFrame getFrame() {
     	return frame;
     }

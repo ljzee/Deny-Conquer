@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 
 import command.Command;
 import command.PollGameDataCommand;
@@ -37,6 +38,7 @@ public class ClientConnection extends Thread {
             this.ooutstream.flush();
         } catch (IOException e) {
             // TODO Auto-generated catch block
+
             e.printStackTrace();
         }
 
@@ -108,12 +110,15 @@ public class ClientConnection extends Thread {
                     this.ooutstream.flush();
                     this.ooutstream.reset(); // Reset the stream
                 }
-            } catch (ClassNotFoundException e) {
+            } catch (Exception ex) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+               if (ex instanceof SocketException) {
+                   this.playerHasQuit = true;
+                    System.out.println("The player has quit.");
+                    server.connections.remove(this);
+               }else{
+                   ex.printStackTrace();
+               }
             }
         }
     }
