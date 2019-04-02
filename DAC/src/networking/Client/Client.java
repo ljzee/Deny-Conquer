@@ -15,6 +15,7 @@ import command.PollGameDataCommandResponse;
 import command.ScribbleCellCommand;
 import game.CellPane;
 import game.Model;
+import networking.Shared.ClientInfo;
 
 public class Client {
 //	public static void init(String[] args) {
@@ -22,11 +23,15 @@ public class Client {
     Model model;
     String hostName;
     int portNumber;
-    ArrayList<String> clientAddresses;
-    Socket echoSocket;
 
+    ArrayList<ClientInfo> clientInfos;
+
+    Socket echoSocket;
+    ConcurrentLinkedQueue<Command> commandQueue;
     Color assignedColor;
     int clientID = -1;
+    ArrayList<Color> clientColorList;
+
     //to be filled in in the future, right now it's just simple constructor for testing.
 
     public Client() {
@@ -43,7 +48,9 @@ public class Client {
         Long currentLatency = new Long(0); //updated by timing PollGameDataCommand
         Long offset = new Long(0); //offset between client time (currentTimeMillis) and server time
 
-        ConcurrentLinkedQueue<Command> commandQueue = new ConcurrentLinkedQueue<Command>();
+        if (commandQueue == null){
+            commandQueue = new ConcurrentLinkedQueue<Command>();
+        }
 
         try {
             if (echoSocket == null) {
@@ -83,13 +90,13 @@ public class Client {
                 clientID = (int) in.readObject();
             }
 
-            clientAddresses = (ArrayList<String>) in.readObject();
+            clientInfos = (ArrayList<ClientInfo>) in.readObject();
 
             if(model == null) {
                 model = new Model(assignedColor, commandQueue, clientID, offset, currentLatency);
             }
 
-            System.out.println(clientAddresses);
+            System.out.println(clientInfos);
             System.out.println(echoSocket.getLocalPort());
             while (true) {
                 if (!commandQueue.isEmpty()) {
@@ -145,9 +152,10 @@ public class Client {
                 }
             }
         } catch (Exception ex) {
-            if (ex instanceof EOFException | (ex instanceof SocketException &&clientAddresses.size()!=0)) {
+            if (ex instanceof EOFException | (ex instanceof SocketException && clientInfos.size()!=0)) {
                 System.out.println("Server Disconnected. Waiting for game to resume");
                 ClientErrorHandler.handleServerDisc(this);
+                this.init();
             } else {
                 ex.printStackTrace();
             }

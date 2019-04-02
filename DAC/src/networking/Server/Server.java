@@ -5,11 +5,14 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
-
 import command.Command;
+import java.util.Map;
 import game.Model;
+import networking.Client.Client;
+import networking.Shared.ClientInfo;
 
 public class Server {
 
@@ -22,12 +25,12 @@ public class Server {
 
     ArrayList<Color> unusedColors;
     ArrayList<Color> usedColors;
-
-    ArrayList<String> clientAddresses;
+    ArrayList<ClientInfo> clientInfos;
+//    ArrayList<String> clientAddresses;
 
     ConcurrentLinkedQueue<Command> commandQueue = new ConcurrentLinkedQueue<Command>();
 
-    public Server(Model model, int port, int numOfConnections) {
+    public Server(Model model, int port, int numOfConnections, ArrayList<ClientInfo> infos) {
         System.out.println(numOfConnections);
         this.NumberOfConnections = numOfConnections;
         this.model = new Model(model);
@@ -38,11 +41,12 @@ public class Server {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        this.clientAddresses = new ArrayList<String>();
+        this.clientInfos = new ArrayList<>(infos);
+//        this.clientAddresses = new ArrayList<String>();
     }
 
     public Server(int port) {
-        this.NumberOfConnections = 4;
+        this.NumberOfConnections = 3;
 
         this.connections = new ArrayList<ClientConnection>();
         try {
@@ -51,16 +55,17 @@ public class Server {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        this.clientAddresses = new ArrayList<String>();
-
+//        this.clientAddresses = new ArrayList<String>();
+        this.clientInfos = new ArrayList<>();
         this.usedColors = new ArrayList<Color>();
         this.unusedColors = new ArrayList<Color>();
-
+        this.unusedColors.add(Color.ORANGE);
         this.unusedColors.add(Color.BLUE);
         this.unusedColors.add(Color.RED);
         this.unusedColors.add(Color.YELLOW);
         this.unusedColors.add(Color.GREEN);
         this.unusedColors.add(Color.DARK_GRAY);
+        this.unusedColors.add(Color.MAGENTA);
     }
 
     public void acceptConnections(int numberOfConnections) {
@@ -72,7 +77,6 @@ public class Server {
                 ClientConnection clientConnection = new ClientConnection(clientSocket, this, i);
                 clientConnection.start();
                 connections.add(clientConnection);
-                clientAddresses.add(clientSocket.getRemoteSocketAddress().toString());
                 System.out.println("New connection: " + clientSocket.getRemoteSocketAddress().toString());
                 System.out.println("Number of connections needed: " + (numberOfConnections - this.connections.size()));
             } catch (IOException e) {
@@ -99,8 +103,14 @@ public class Server {
                 c.sendToClient(color);
 
                 c.sendToClient(c.getConnectionID());
+                clientInfos.add(new ClientInfo(color,c.socket.getInetAddress().toString()));
             }
-            c.sendToClient( new ArrayList<String>(clientAddresses.subList(1, clientAddresses.size())));
+            else{
+                c.setColor(ServerHelper.getPreassignedColor(c.socket.getLocalAddress().toString(), clientInfos ));
+            }
+        }
+        for(ClientConnection c:connections){
+            c.sendToClient(new ArrayList<ClientInfo>(clientInfos.subList(1, clientInfos.size())));
         }
     }
 
@@ -145,7 +155,7 @@ public class Server {
         else{
             beginHandlingClientCommands();
         }
-        System.out.println(clientAddresses);
+        System.out.println(clientInfos);
         this.handleProcessCommand();
     }
 

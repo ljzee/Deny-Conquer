@@ -33,8 +33,8 @@ public class ClientConnection extends Thread {
         this.connectionID = connectionID;
 
         try {
-            this.oinstream = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
-            this.ooutstream = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+            this.oinstream = new ObjectInputStream(new BufferedInputStream(this.socket.getInputStream()));
+            this.ooutstream = new ObjectOutputStream(new BufferedOutputStream(this.socket.getOutputStream()));
             this.ooutstream.flush();
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -64,7 +64,6 @@ public class ClientConnection extends Thread {
             e.printStackTrace();
         }
     }
-
     public void setColor(Color color) {
         this.playerColor = color;
     }

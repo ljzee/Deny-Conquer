@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class CommandProcessor {
     public static void processCommands(ConcurrentLinkedQueue<Command> commandQueue, ArrayList<ClientConnection> connections, Model model) {
         while (!commandQueue.isEmpty()) {
-            System.out.println("Check");
             GameplayCommands command = (GameplayCommands) commandQueue.poll();
             int x = command.getX();
             int y = command.getY();
