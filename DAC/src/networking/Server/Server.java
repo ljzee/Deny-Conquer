@@ -4,12 +4,17 @@ import java.awt.Color;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
+
 import command.Command;
+
 import java.util.Map;
+
 import game.Model;
 import networking.Client.Client;
 import networking.Shared.ClientInfo;
@@ -74,14 +79,20 @@ public class Server {
     public void acceptConnections(int numberOfConnections) {
         System.out.println("Waiting for connections");
         int i = 0;
+        if (isReconnect) {
+            try{
+                socket.setSoTimeout(3000);
+            } catch (SocketException se){
+                se.printStackTrace();
+            }
+        }
         while (this.connections.size() < numberOfConnections) {
             try {
                 Socket clientSocket = socket.accept();
                 ClientConnection clientConnection;
-                if(!this.isReconnect){
+                if (!this.isReconnect) {
                     clientConnection = new ClientConnection(clientSocket, this, i);
-                }
-                else{
+                } else {
                     int connectionID = ServerHelper.getOldConnectionID(clientSocket.getInetAddress().toString(),
                             clientInfos);
                     clientConnection = new ClientConnection(clientSocket, this, connectionID);
@@ -91,8 +102,13 @@ public class Server {
                 System.out.println("New connection: " + clientSocket.getRemoteSocketAddress().toString());
                 System.out.println("Number of connections needed: " + (numberOfConnections - this.connections.size()));
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                // if player is not connect back in time, server will give up listening.
+                if(e instanceof SocketTimeoutException){
+                    numberOfConnections -=1;
+                } else{
+                    e.printStackTrace();
+
+                }
             }
             i++;
         }
@@ -108,19 +124,18 @@ public class Server {
 
     public void beginHandlingClientCommands() {
         for (ClientConnection c : connections) {
-            if(!this.isReconnect){
+            if (!this.isReconnect) {
                 Color color = getUnusedColor();
                 c.setColor(color);
                 c.sendToClient(color);
 
                 c.sendToClient(c.getConnectionID());
-                clientInfos.add(new ClientInfo(color,c.socket.getInetAddress().toString(),c.getConnectionID()));
-            }
-            else{
+                clientInfos.add(new ClientInfo(color, c.socket.getInetAddress().toString(), c.getConnectionID()));
+            } else {
                 c.setColor(ServerHelper.getPreassignedColor(c.socket.getInetAddress().toString(), clientInfos));
             }
         }
-        for(ClientConnection c:connections){
+        for (ClientConnection c : connections) {
             c.sendToClient(new ArrayList<ClientInfo>(clientInfos.subList(1, clientInfos.size())));
         }
     }
@@ -138,7 +153,6 @@ public class Server {
             try {
                 TimeUnit.MILLISECONDS.sleep(5);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -155,15 +169,12 @@ public class Server {
         try {
             TimeUnit.SECONDS.sleep(1); //to ensure clock synchronization tasks are done
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
-
         if (!this.isReconnect) {
             this.gameInit();
-        }
-        else{
+        } else {
             beginHandlingClientCommands();
         }
         System.out.println(clientInfos);

@@ -1,11 +1,7 @@
 package networking.Server;
 
 import java.awt.Color;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 
@@ -111,7 +107,7 @@ public class ClientConnection extends Thread {
                 }
             } catch (Exception ex) {
                 // TODO Auto-generated catch block
-               if (ex instanceof SocketException) {
+               if (ex instanceof SocketException || ex instanceof EOFException) {
                    this.playerHasQuit = true;
                     System.out.println("The player has quit.");
                     server.connections.remove(this);
