@@ -155,6 +155,7 @@ public class Client {
             if (ex instanceof EOFException | (ex instanceof SocketException && clientInfos.size()!=0)) {
                 System.out.println("Server Disconnected. Waiting for game to resume");
                 ClientErrorHandler.handleServerDisc(this);
+                commandQueue.clear();
                 this.init();
             } else {
                 ex.printStackTrace();

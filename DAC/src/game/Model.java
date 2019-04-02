@@ -166,4 +166,14 @@ public class Model {
     	return grid;
     }
 
+    public void clear(){
+        Component[] cells = (Component[])this.grid.getComponents();
+
+        for(Component c : cells) {
+            CellPane cell = (CellPane)c;
+            if(!cell.getDone()) {
+                cell.clearCell();
+            }
+        }
+    }
 }

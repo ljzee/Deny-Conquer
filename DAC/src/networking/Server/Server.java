@@ -33,7 +33,10 @@ public class Server {
     public Server(Model model, int port, int numOfConnections, ArrayList<ClientInfo> infos) {
         System.out.println(numOfConnections);
         this.NumberOfConnections = numOfConnections;
+
+        model.clear();
         this.model = new Model(model);
+
         this.connections = new ArrayList<ClientConnection>();
         try {
             this.socket = new ServerSocket(port);
@@ -46,7 +49,7 @@ public class Server {
     }
 
     public Server(int port) {
-        this.NumberOfConnections = 3;
+        this.NumberOfConnections = 4;
 
         this.connections = new ArrayList<ClientConnection>();
         try {
@@ -74,7 +77,15 @@ public class Server {
         while (this.connections.size() < numberOfConnections) {
             try {
                 Socket clientSocket = socket.accept();
-                ClientConnection clientConnection = new ClientConnection(clientSocket, this, i);
+                ClientConnection clientConnection;
+                if(!this.isReconnect){
+                    clientConnection = new ClientConnection(clientSocket, this, i);
+                }
+                else{
+                    int connectionID = ServerHelper.getOldConnectionID(clientSocket.getInetAddress().toString(),
+                            clientInfos);
+                    clientConnection = new ClientConnection(clientSocket, this, connectionID);
+                }
                 clientConnection.start();
                 connections.add(clientConnection);
                 System.out.println("New connection: " + clientSocket.getRemoteSocketAddress().toString());
@@ -103,10 +114,10 @@ public class Server {
                 c.sendToClient(color);
 
                 c.sendToClient(c.getConnectionID());
-                clientInfos.add(new ClientInfo(color,c.socket.getInetAddress().toString()));
+                clientInfos.add(new ClientInfo(color,c.socket.getInetAddress().toString(),c.getConnectionID()));
             }
             else{
-                c.setColor(ServerHelper.getPreassignedColor(c.socket.getLocalAddress().toString(), clientInfos ));
+                c.setColor(ServerHelper.getPreassignedColor(c.socket.getInetAddress().toString(), clientInfos));
             }
         }
         for(ClientConnection c:connections){

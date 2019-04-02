@@ -12,7 +12,10 @@ public class CommandProcessor {
             GameplayCommands command = (GameplayCommands) commandQueue.poll();
             int x = command.getX();
             int y = command.getY();
-            ClientConnection connection = connections.get(command.getConnectionID());
+
+            ClientConnection connection = findConnByID(connections, command.getConnectionID());
+
+//            ClientConnection connection = connections.get(command.getConnectionID());
             CellPane cell = (CellPane) model.getGrid().getComponentAt(x, y);
 
             if (command instanceof LockCellCommand) {
@@ -28,6 +31,15 @@ public class CommandProcessor {
                 }
             }
         }
+    }
+
+    private static ClientConnection findConnByID(ArrayList<ClientConnection> connections, int commandConnID ){
+        for(ClientConnection c:connections){
+            if(c.connectionID == commandConnID){
+                return c;
+            }
+        }
+        return null;
     }
 
     private static void ReachColorThreshold(GameplayCommands command, ClientConnection connection, CellPane cell) {
