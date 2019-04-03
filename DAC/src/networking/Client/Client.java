@@ -32,12 +32,16 @@ public class Client {
     Color assignedColor;
     int clientID = -1;
     ArrayList<Color> clientColorList;
+    int penThickness;
+    int numBoxes;
+    double percentageCovered;
+
     //test
     //test
     //to be filled in in the future, right now it's just simple constructor for testing.
 
     public Client() {
-        this.hostName = "192.168.1.66";
+        this.hostName = "192.168.226.139";
         this.portNumber = 9991;
     }
 
@@ -92,9 +96,16 @@ public class Client {
                 clientID = (int) in.readObject();
             }
             //settings
-            int penThickness = (int)in.readObject();
-		    int numBoxes = (int)in.readObject();
-		    double percentageCovered = (double)in.readObject();
+            if (penThickness == 0){
+                penThickness = (int)in.readObject();
+            }
+            if (numBoxes == 0){
+                numBoxes = (int)in.readObject();
+            }
+            if (percentageCovered == 0){
+                percentageCovered = (double)in.readObject();
+
+            }
 		    List<String> winningPlayers;
 
             clientInfos = (ArrayList<ClientInfo>) in.readObject();

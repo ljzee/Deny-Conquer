@@ -40,7 +40,8 @@ public class Server {
     int numBoxes;
     double targetPercentage;
 
-    public Server(Model model, int port, int numOfConnections, ArrayList<ClientInfo> infos) {
+    public Server(Model model, int port, int numOfConnections, ArrayList<ClientInfo> infos,
+                  int penThickness, int numBoxes, double targetPercentage) {
         System.out.println(numOfConnections);
         this.NumberOfConnections = numOfConnections;
 
@@ -59,7 +60,7 @@ public class Server {
     }
 
     public Server(int port, int penThickness, int numBoxes, double targetPercentage) {
-        this.NumberOfConnections = 1;
+        this.NumberOfConnections = 2;
 
         this.connections = new ArrayList<ClientConnection>();
         try {

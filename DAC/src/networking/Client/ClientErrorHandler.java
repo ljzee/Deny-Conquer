@@ -68,7 +68,7 @@ public class ClientErrorHandler {
     public static void startAltServer(Client client) {
         System.out.println("Server moved to this machine");
         Server server = new Server(client.model, 12345 + client.clientInfos.size() * 10, client.clientInfos.size(),
-                client.clientInfos);
+                client.clientInfos, client.penThickness, client.numBoxes, client.percentageCovered);
         server.init(true);
     }
 
