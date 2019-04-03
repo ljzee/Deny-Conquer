@@ -22,10 +22,13 @@ public class CommandProcessor {
             CellPane cell = (CellPane) model.getGrid().getComponentAt(x, y);
 
             if (command instanceof LockCellCommand) {
+                System.out.println(command.getConnectionID() + " Lock TS: " + command.getTimeStamp());
                 LockCell(command, x, y, connection, cell);
             } else if (command instanceof ScribbleCellCommand) {
+                System.out.println(command.getConnectionID() + " Scribble TS: " + command.getTimeStamp());
                 ScribbleCell((ScribbleCellCommand) command, x, y, cell);
             } else if (command instanceof ClearCellColorCommand) {
+                System.out.println(command.getConnectionID() + " Clear TS: " + command.getTimeStamp());
                 if (cell.reachedColoredThreshold()) {
                     ReachColorThreshold(command, connection, cell);
                     
@@ -60,7 +63,6 @@ public class CommandProcessor {
         cell.setOwnerID(ownerID);
         cell.setBackground(connection.playerColor);
         cell.setDone(true);
-        System.out.println(command.getConnectionID() + " Clear TS: " + command.getTimeStamp());
         //System.out.println(command.getConnectionID() + " - Successfully colored! " + x + " " + y);
     }
 
@@ -68,7 +70,6 @@ public class CommandProcessor {
         if (cell.getOwnerID() == command.getConnectionID()) {
             cell.getPoints().addAll(command.getPoints());
             cell.repaint();
-            System.out.println(command.getConnectionID() + " Scribble TS: " + command.getTimeStamp());
             //System.out.println(cell.getPoints().size() + " " + command.getPoints().size());
             //System.out.println(command.getConnectionID() + " - Successfully scribbled! " + x + " " + y);
         } else {
@@ -80,7 +81,6 @@ public class CommandProcessor {
         if (cell.getOwnerID() == -1 || (command.getTimeStamp() < cell.getCurrentLockTimestamp())) {
             cell.setOwnerID(command.getConnectionID());
             cell.setColor(connection.playerColor);
-            System.out.println(command.getConnectionID() + " Lock TS: " + command.getTimeStamp());
             //System.out.println(command.getConnectionID() + " - Successfully locked! " + x + " " + y);
         } else {
             //System.out.println(command.getConnectionID() + " - Failed lock!: client ID: " + cell.getOwnerID() + " has already locked this cell.");

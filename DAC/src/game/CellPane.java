@@ -165,7 +165,7 @@ public class CellPane extends JPanel {
 	            	LockCellCommand command = new LockCellCommand(getX(), getY(), timestamp);
 	            	commandQueue.add(command);
 	            	
-	            	System.out.println("Lock: " + getX() + " " + getY());
+	            	//System.out.println("Lock: " + getX() + " " + getY());
             	}
 ////            	isModified = true;
 ////            	points.add(e.getPoint());
@@ -182,7 +182,7 @@ public class CellPane extends JPanel {
 	            	ClearCellColorCommand command = new ClearCellColorCommand(getX(), getY(), timestamp);
 	            	commandQueue.add(command);
 	            	
-	            	System.out.println("Clear: " + getX() + " " + getY());
+	            	//System.out.println("Clear: " + getX() + " " + getY());
             	}
 //            	isModified = true;
 //            	//setBackground(defaultBackground);
@@ -231,7 +231,7 @@ public class CellPane extends JPanel {
             		long timestamp = System.currentTimeMillis() + offset.longValue() + currentLatency.longValue();
 		        	ScribbleCellCommand command = new ScribbleCellCommand(getX(), getY(), e.getPoint(), timestamp);
 		        	commandQueue.add(command);
-		        	System.out.println("drag: " + getX() + " " + getY());
+		        	//System.out.println("drag: " + getX() + " " + getY());
 	        	}
 	//        	isModified = true;
 	//        	points.add(e.getPoint());
@@ -248,7 +248,7 @@ public class CellPane extends JPanel {
     	if(ownerID != -1) {
 	        Graphics2D g2 = (Graphics2D) g;
 	        g.setColor(color);
-	        System.out.println("width is " + getWidth());
+	        //System.out.println("width is " + getWidth());
 	        g2.setStroke(new BasicStroke(getWidth()/penThickness,
 	                                     BasicStroke.CAP_ROUND,
 	                                     BasicStroke.JOIN_ROUND));
@@ -286,7 +286,7 @@ public class CellPane extends JPanel {
     		}
     	}
     	//System.out.println("TARGET PERCENTAGE = " + targetPercentage);
-    	System.out.println("amountColored/area = " + amountColored/area);
+    	//System.out.println("amountColored/area = " + amountColored/area);
     	if(amountColored/area > targetPercentage) { //0.6
     		return true;
     	} else {

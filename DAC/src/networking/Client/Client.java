@@ -41,7 +41,7 @@ public class Client {
     //to be filled in in the future, right now it's just simple constructor for testing.
 
     public Client() {
-        this.hostName = "192.168.226.139";
+        this.hostName = "142.58.15.137";
         this.portNumber = 9991;
     }
 
