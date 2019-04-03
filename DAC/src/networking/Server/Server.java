@@ -185,7 +185,7 @@ public class Server {
         this.isReconnect = isReconnect;
         this.acceptConnections(this.NumberOfConnections);
         try {
-            TimeUnit.SECONDS.sleep(1); //to ensure clock synchronization tasks are done
+            TimeUnit.SECONDS.sleep(5); //to ensure clock synchronization tasks are done
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

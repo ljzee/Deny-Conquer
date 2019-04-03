@@ -50,7 +50,7 @@ public class Client {
 //		int portNumber = Integer.parseInt(args[1]);
 
 
-        int syncIteration = 50; //number of iterations to run in the initial clock synchronization process
+        int syncIteration = 5; //number of iterations to run in the initial clock synchronization process
         Long currentLatency = new Long(0); //updated by timing PollGameDataCommand
         Long offset = new Long(0); //offset between client time (currentTimeMillis) and server time
 
