@@ -31,16 +31,21 @@ public class Server {
     ArrayList<Color> unusedColors;
     ArrayList<Color> usedColors;
     ArrayList<ClientInfo> clientInfos;
-//    ArrayList<String> clientAddresses;
+    //ArrayList<String> clientAddresses;
 
     ConcurrentLinkedQueue<Command> commandQueue = new ConcurrentLinkedQueue<Command>();
+    
+    //configurations
+    int penThickness;
+    int numBoxes;
+    double targetPercentage;
 
     public Server(Model model, int port, int numOfConnections, ArrayList<ClientInfo> infos) {
         System.out.println(numOfConnections);
         this.NumberOfConnections = numOfConnections;
 
         model.clear();
-        this.model = new Model(model);
+        this.model = new Model(model, numBoxes, penThickness, targetPercentage);
 
         this.connections = new ArrayList<ClientConnection>();
         try {
@@ -53,8 +58,8 @@ public class Server {
 //        this.clientAddresses = new ArrayList<String>();
     }
 
-    public Server(int port) {
-        this.NumberOfConnections = 4;
+    public Server(int port, int penThickness, int numBoxes, double targetPercentage) {
+        this.NumberOfConnections = 1;
 
         this.connections = new ArrayList<ClientConnection>();
         try {
@@ -74,6 +79,12 @@ public class Server {
         this.unusedColors.add(Color.GREEN);
         this.unusedColors.add(Color.DARK_GRAY);
         this.unusedColors.add(Color.MAGENTA);
+        
+        //settings
+        this.penThickness = penThickness;
+        this.numBoxes = numBoxes;
+        this.targetPercentage = targetPercentage;
+
     }
 
     public void acceptConnections(int numberOfConnections) {
@@ -130,6 +141,12 @@ public class Server {
                 c.sendToClient(color);
 
                 c.sendToClient(c.getConnectionID());
+                
+                //settings
+                c.sendToClient(penThickness);
+                c.sendToClient(numBoxes);
+                c.sendToClient(targetPercentage);
+
                 clientInfos.add(new ClientInfo(color, c.socket.getInetAddress().toString(), c.getConnectionID()));
             } else {
                 c.setColor(ServerHelper.getPreassignedColor(c.socket.getInetAddress().toString(), clientInfos));
@@ -141,7 +158,7 @@ public class Server {
     }
 
     public void gameInit() {
-        this.model = new Model(getUnusedColor());
+        this.model = new Model(getUnusedColor(), numBoxes, penThickness, targetPercentage);
         this.done = false;
         beginHandlingClientCommands();
     }

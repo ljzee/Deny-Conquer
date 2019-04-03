@@ -12,11 +12,13 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.UIManager;
@@ -34,6 +36,8 @@ public class Model {
 	
 	private JFrame frame;
 	private Grid grid;
+	private boolean playingState;
+
 
     public static void main(String[] args) {
     	  
@@ -82,19 +86,19 @@ public class Model {
 			int ownerID = cell.getOwnerID();
 			boolean done = cell.getDone();
 			
-			gameData.add(new PollGameDataCommandResponse(x,y,backgroundColor,brushColor, points, ownerID, done));
+			gameData.add(new PollGameDataCommandResponse(x,y,backgroundColor,brushColor, points, ownerID, done, true));
 		}
 		return gameData;
 	}
 
-    public Model(Color color) {
+    public Model(Color color, int numBoxes, int penThickness, double targetPercentage) {
     	try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
         }
 
         frame = new JFrame("TestingServer");
-        grid = new Grid(color); 
+        grid = new Grid(color, numBoxes, penThickness, targetPercentage); 
         
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
@@ -102,17 +106,19 @@ public class Model {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        
+        playingState = true;
     }
     
     
-    public Model(Color color, ConcurrentLinkedQueue<Command> commandQueue, int clientID, Long offset, Long currentLatency) {
+    public Model(Color color, ConcurrentLinkedQueue<Command> commandQueue, int clientID, Long offset, Long currentLatency, int penThickness, int numBoxes, double targetPercentage) {
     	try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
         }
 
         frame = new JFrame("Testing");
-        grid = new Grid(color, commandQueue, clientID, offset, currentLatency); 
+        grid = new Grid(color, commandQueue, clientID, offset, currentLatency, penThickness, numBoxes, targetPercentage); 
         
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
@@ -120,16 +126,18 @@ public class Model {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        
+        playingState = true;
     }
 
-    public Model(Model model) {
+    public Model(Model model, int numBoxes, int penThickness, double targetPercentage) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
         }
 
         frame = new JFrame("Server");
-        grid = new Grid(Color.BLACK);
+        grid = new Grid(Color.BLACK, numBoxes, penThickness, targetPercentage);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
@@ -152,8 +160,23 @@ public class Model {
             newCell.setDone(oldCell.getDone());
             newCell.repaint();
         }
+        
+        playingState = true;
     }
-
+    
+    public void endGame(List<String> winningPlayers) {
+    	
+    	String endGameMsg = "Terminating game..." + System.lineSeparator() + "Winning Players: " + System.lineSeparator();
+    	int size = winningPlayers.size();
+    	for(int i = 0; i < size - 1; i++) {
+    		endGameMsg = endGameMsg +  "Player " + winningPlayers.get(i) + ", with a score of " + winningPlayers.get(size - 1) + System.lineSeparator();
+    	}
+        frame.setVisible(false);
+        
+        //display message dialog with information
+        JOptionPane.showMessageDialog(null, endGameMsg);
+    }
+    
     public JFrame getFrame() {
     	return frame;
     }
@@ -176,4 +199,13 @@ public class Model {
             }
         }
     }
+    
+    public boolean getPlayingState() {
+    	return playingState;
+    }
+    
+    public void endPlayingState() {
+    	playingState = false;
+    }
+
 }

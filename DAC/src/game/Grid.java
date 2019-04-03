@@ -14,25 +14,25 @@ import game.CellPane;
 
 public class Grid extends JPanel {
 
-    public Grid(Color color) {
+    public Grid(Color color, int numBoxes, int penThickness, double targetPercentage) {
         setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
-        for (int row = 0; row < 5; row++) {
-            for (int col = 0; col < 5; col++) {
+        for (int row = 0; row < numBoxes; row++) {
+            for (int col = 0; col < numBoxes; col++) {
                 gbc.gridx = col;
                 gbc.gridy = row;
 
-                CellPane cellPane = new CellPane(color);
+                CellPane cellPane = new CellPane(color, penThickness, targetPercentage);
                 Border border = null;
-                if (row < 4) {
-                    if (col < 4) {
+                if (row < numBoxes - 1) {
+                    if (col < numBoxes - 1) {
                         border = new MatteBorder(1, 1, 0, 0, Color.GRAY);
                     } else {
                         border = new MatteBorder(1, 1, 0, 1, Color.GRAY);
                     }
                 } else {
-                    if (col < 4) {
+                    if (col < numBoxes - 1) {
                         border = new MatteBorder(1, 1, 1, 0, Color.GRAY);
                     } else {
                         border = new MatteBorder(1, 1, 1, 1, Color.GRAY);
@@ -44,25 +44,25 @@ public class Grid extends JPanel {
         }
     }
     
-    public Grid(Color color, ConcurrentLinkedQueue<Command> commandQueue, int clientID, Long offset, Long currentLatency) {
+    public Grid(Color color, ConcurrentLinkedQueue<Command> commandQueue, int clientID, Long offset, Long currentLatency, int penThickness, int numBoxes, double targetPercentage) {
         setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
-        for (int row = 0; row < 5; row++) {
-            for (int col = 0; col < 5; col++) {
+        for (int row = 0; row < numBoxes; row++) {
+            for (int col = 0; col < numBoxes; col++) {
                 gbc.gridx = col;
                 gbc.gridy = row;
 
-                CellPane cellPane = new CellPane(color, commandQueue, clientID, offset, currentLatency);
+                CellPane cellPane = new CellPane(color, commandQueue, clientID, offset, currentLatency, penThickness, targetPercentage);
                 Border border = null;
-                if (row < 4) {
-                    if (col < 4) {
+                if (row < numBoxes - 1) {
+                    if (col < numBoxes - 1) {
                         border = new MatteBorder(1, 1, 0, 0, Color.GRAY);
                     } else {
                         border = new MatteBorder(1, 1, 0, 1, Color.GRAY);
                     }
                 } else {
-                    if (col < 4) {
+                    if (col < numBoxes - 1) {
                         border = new MatteBorder(1, 1, 1, 0, Color.GRAY);
                     } else {
                         border = new MatteBorder(1, 1, 1, 1, Color.GRAY);

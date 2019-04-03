@@ -3,6 +3,7 @@ package command;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PollGameDataCommandResponse implements GameplayCommands {
 	/**
@@ -20,7 +21,11 @@ public class PollGameDataCommandResponse implements GameplayCommands {
 	private int ownerID;
 	private boolean done;
 	
-	public PollGameDataCommandResponse(int x, int y, Color backgroundColor, Color brushColor, ArrayList<Point> points, int ownerID, boolean done) {
+	private boolean playingState;
+	private List<String> winningPlayers;
+
+
+	public PollGameDataCommandResponse(int x, int y, Color backgroundColor, Color brushColor, ArrayList<Point> points, int ownerID, boolean done, boolean state) {
 		this.x = x;
 		this.y = y;
 		this.backgroundColor = backgroundColor;
@@ -28,8 +33,14 @@ public class PollGameDataCommandResponse implements GameplayCommands {
 		this.points = new ArrayList<Point>(points);
 		this.ownerID = ownerID;
 		this.done = done;
+		this.playingState = state;
 	}
 	
+	public PollGameDataCommandResponse(boolean state, List<String> winningPlayers) {
+		this.playingState = state;
+		this.winningPlayers = winningPlayers;
+	}
+
 	public int getX() {
 		return x;
 	}
@@ -74,4 +85,13 @@ public class PollGameDataCommandResponse implements GameplayCommands {
 	public void setConnectionID(int connectionID) {
 		this.connectionID = connectionID;
 	}
+	
+	public boolean getPlayingState() {
+		return playingState;
+	}
+	
+	public List<String> getWinningPlayers() {
+		return winningPlayers;
+	}
+
 }

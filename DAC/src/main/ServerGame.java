@@ -6,9 +6,9 @@ public class ServerGame implements IGame {
     private Server server;
     private Client client;
 
-    public ServerGame(int port){
+    public ServerGame(int port, int penThickness, int numBoxes, double percentageCovered){
 
-        this.server = new Server(port);
+        this.server = new Server(port, penThickness, numBoxes, percentageCovered);
         this.client = new Client();
     }
 

@@ -6,6 +6,7 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -31,11 +32,12 @@ public class Client {
     Color assignedColor;
     int clientID = -1;
     ArrayList<Color> clientColorList;
-
+    //test
+    //test
     //to be filled in in the future, right now it's just simple constructor for testing.
 
     public Client() {
-        this.hostName = "192.168.226.136";
+        this.hostName = "192.168.1.66";
         this.portNumber = 9991;
     }
 
@@ -89,11 +91,16 @@ public class Client {
             if (clientID == -1){
                 clientID = (int) in.readObject();
             }
+            //settings
+            int penThickness = (int)in.readObject();
+		    int numBoxes = (int)in.readObject();
+		    double percentageCovered = (double)in.readObject();
+		    List<String> winningPlayers;
 
             clientInfos = (ArrayList<ClientInfo>) in.readObject();
 
             if(model == null) {
-                model = new Model(assignedColor, commandQueue, clientID, offset, currentLatency);
+                model = new Model(assignedColor, commandQueue, clientID, offset, currentLatency, penThickness, numBoxes, percentageCovered);
             }
 
             System.out.println(clientInfos);
@@ -132,17 +139,28 @@ public class Client {
                 currentLatency = (stop - start) / 2;
 
                 for (PollGameDataCommandResponse command : response) {
-                    CellPane cell = (CellPane) model.getGrid().getComponentAt(command.getX(), command.getY());
+                    
+                	if(command.getPlayingState() == false) { //indicates game is over
+		    			System.out.println("code goes here");
+		    			winningPlayers = command.getWinningPlayers();
+		    			//endGame();
+		    			model.endGame(winningPlayers);
+		    			System.out.println("GAME HAS COMPLETED, WINNERS ARE:");
+		    			break;
+		    		} else {
 
-                    if (!cell.getDone()) {
-                        cell.setPoints(command.getPoints());
-                        cell.setColor(command.getBrushColor());
-                        cell.setBackground(command.getBackgroundColor());
-                        cell.setOwnerID(command.getOwnerID());
-                        cell.setDone(command.getDone());
-                        cell.repaint();
-                    }
-                }
+		            	CellPane cell = (CellPane) model.getGrid().getComponentAt(command.getX(), command.getY());
+		
+		                if (!cell.getDone()) {
+		                    cell.setPoints(command.getPoints());
+		                    cell.setColor(command.getBrushColor());
+		                    cell.setBackground(command.getBackgroundColor());
+		                    cell.setOwnerID(command.getOwnerID());
+		                    cell.setDone(command.getDone());
+		                    cell.repaint();
+		                }
+		    		}
+	            }
 
                 try {
                     TimeUnit.MILLISECONDS.sleep(5);

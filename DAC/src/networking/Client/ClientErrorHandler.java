@@ -88,7 +88,7 @@ public class ClientErrorHandler {
 
     // overload function to handle last client
     public static void connectToAltServer(Client client, Boolean isLastClient) throws Exception {
-        var addr = client.echoSocket.getLocalAddress().toString().replace("/", "");
+        String addr = client.echoSocket.getLocalAddress().toString().replace("/", "");
         int port = 12345 + client.clientInfos.size() * 10;
         client.echoSocket.close();
 //            client.echoSocket.connect(socketAddr);

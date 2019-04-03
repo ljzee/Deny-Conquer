@@ -3,6 +3,7 @@ package networking.Server;
 import command.*;
 import game.*;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -14,8 +15,10 @@ public class CommandProcessor {
             int y = command.getY();
 
             ClientConnection connection = findConnByID(connections, command.getConnectionID());
+            Grid grid = (Grid) model.getGrid();
 
-//            ClientConnection connection = connections.get(command.getConnectionID());
+
+//          ClientConnection connection = connections.get(command.getConnectionID());
             CellPane cell = (CellPane) model.getGrid().getComponentAt(x, y);
 
             if (command instanceof LockCellCommand) {
@@ -25,6 +28,15 @@ public class CommandProcessor {
             } else if (command instanceof ClearCellColorCommand) {
                 if (cell.reachedColoredThreshold()) {
                     ReachColorThreshold(command, connection, cell);
+                    
+                  //Determine winner                    
+                    if(allCellsColored(grid)) {
+                    	System.out.print("ALL CELLS COLORED!!");
+                    	model.endPlayingState();
+                    	//endGame(winningPlayer);
+                    	//endgame for server maybe?
+                    }
+
                 } else {
                     cell.clearCell();
                     //System.out.println(command.getConnectionID() + " - Successfully cleared! " + x + " " + y);
@@ -74,4 +86,27 @@ public class CommandProcessor {
             //System.out.println(command.getConnectionID() + " - Failed lock!: client ID: " + cell.getOwnerID() + " has already locked this cell.");
         }
     }
+    
+    private static boolean allCellsColored(Grid grid) {
+    	//int width = grid.getWidth();
+    	int numComponenents = grid.getComponentCount();
+    	int countBoxes = 0;
+    	Component[] cells = null;
+		cells = (Component[])grid.getComponents();
+		
+    	for(Component c : cells) {
+			CellPane cell = (CellPane)c;
+            if(cell.getDone()) {
+            	countBoxes++;
+            }	
+        }
+        
+    	//int numBoxes = width*width;
+    	if(countBoxes == numComponenents) {
+    		return true;
+    	} else {
+        	return false;
+    	}
+    }
+
 }

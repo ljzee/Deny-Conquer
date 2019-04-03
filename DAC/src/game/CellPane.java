@@ -35,8 +35,12 @@ public class CellPane extends JPanel {
     private Long offset; 
     private Long currentLatency;
     private long currentLockTimestamp;
-
-    public CellPane(Color color) {
+    
+    //settings
+    private int penThickness;
+    private double targetPercentage;
+    
+    public CellPane(Color color , int penThickness, double targetPercentage) {
     	status = 0;
     	points = new ArrayList<Point>();
     	defaultBackground = getBackground();
@@ -47,6 +51,8 @@ public class CellPane extends JPanel {
     	this.offset = new Long(0);
     	this.currentLatency = new Long(0);
     	this.currentLockTimestamp = 0;
+    	this.targetPercentage = targetPercentage;
+    	this.penThickness = penThickness;
 
 //    	addMouseListener(new MouseAdapter() {
 //            @Override
@@ -121,7 +127,7 @@ public class CellPane extends JPanel {
 //    	});
     }
     
-    public CellPane(Color color, ConcurrentLinkedQueue<Command> commandQueue, int clientID, Long offset, Long currentLatency) {
+    public CellPane(Color color, ConcurrentLinkedQueue<Command> commandQueue, int clientID, Long offset, Long currentLatency, int penThickness, double targetPercentage) {
     	status = 0;
     	points = new ArrayList<Point>();
     	defaultBackground = getBackground();
@@ -134,7 +140,11 @@ public class CellPane extends JPanel {
     	this.offset = offset;
     	this.currentLatency = currentLatency;
     	this.currentLockTimestamp = 0;
-    	
+    	//settings
+    	this.penThickness = penThickness;
+    	this.targetPercentage = targetPercentage;
+
+
     	addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -238,7 +248,8 @@ public class CellPane extends JPanel {
     	if(ownerID != -1) {
 	        Graphics2D g2 = (Graphics2D) g;
 	        g.setColor(color);
-	        g2.setStroke(new BasicStroke(getWidth()/5,
+	        System.out.println("width is " + getWidth());
+	        g2.setStroke(new BasicStroke(getWidth()/penThickness,
 	                                     BasicStroke.CAP_ROUND,
 	                                     BasicStroke.JOIN_ROUND));
 	        for (int i = 1; i < points.size(); i++) {
@@ -274,8 +285,9 @@ public class CellPane extends JPanel {
     			}
     		}
     	}
-    	
-    	if(amountColored/area > 0.6) {
+    	//System.out.println("TARGET PERCENTAGE = " + targetPercentage);
+    	System.out.println("amountColored/area = " + amountColored/area);
+    	if(amountColored/area > targetPercentage) { //0.6
     		return true;
     	} else {
     		return false;
