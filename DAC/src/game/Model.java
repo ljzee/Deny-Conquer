@@ -97,7 +97,7 @@ public class Model {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
         }
 
-        frame = new JFrame("TestingServer");
+        frame = new JFrame("Server");
         grid = new Grid(color, numBoxes, penThickness, targetPercentage); 
         
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -105,7 +105,7 @@ public class Model {
         frame.add(grid);
         frame.pack();
         frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        frame.setVisible(false);
         
         playingState = true;
     }
@@ -117,7 +117,7 @@ public class Model {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
         }
 
-        frame = new JFrame("Testing");
+        frame = new JFrame("Client " + clientID);
         grid = new Grid(color, commandQueue, clientID, offset, currentLatency, penThickness, numBoxes, targetPercentage); 
         
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -144,7 +144,7 @@ public class Model {
         frame.add(grid);
         frame.pack();
         frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        frame.setVisible(false);
 
         Component[] newCells = (Component[])grid.getComponents();
         Component[] oldCells = (Component[])model.grid.getComponents();
