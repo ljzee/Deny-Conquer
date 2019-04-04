@@ -60,7 +60,7 @@ public class Server {
     }
 
     public Server(int port, int penThickness, int numBoxes, double targetPercentage) {
-        this.NumberOfConnections = 4;
+        this.NumberOfConnections = 2;
 
         this.connections = new ArrayList<ClientConnection>();
         try {
