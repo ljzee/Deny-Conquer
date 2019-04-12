@@ -1,5 +1,7 @@
 package command;
 
+//Game commands interface
+
 public interface GameplayCommands extends Command {
     public int getX();
     public int getY();

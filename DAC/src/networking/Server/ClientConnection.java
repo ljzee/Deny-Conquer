@@ -16,6 +16,8 @@ import command.PollGameDataCommandResponse;
 import game.CellPane;
 import game.Grid;
 
+//Client connection created to run on a separate thread every time a new client connects to server
+
 public class ClientConnection extends Thread {
 
     Server server;
@@ -207,9 +209,7 @@ public class ClientConnection extends Thread {
     }
 
     public void run() {
-
     	syncPlayer();
         handlePlayerCommands();
-
     }
 }

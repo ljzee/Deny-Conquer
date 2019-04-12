@@ -12,6 +12,8 @@ import javax.swing.border.MatteBorder;
 import command.Command;
 import game.CellPane;
 
+//Creates the game grid
+
 public class Grid extends JPanel {
 
     public Grid(Color color, int numBoxes, int penThickness, double targetPercentage) {

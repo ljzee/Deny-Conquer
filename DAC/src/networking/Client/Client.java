@@ -18,8 +18,9 @@ import game.CellPane;
 import game.Model;
 import networking.Shared.ClientInfo;
 
+//Game Client
+
 public class Client {
-//	public static void init(String[] args) {
 
     Model model;
     String hostName;
@@ -36,19 +37,14 @@ public class Client {
     int numBoxes;
     double percentageCovered;
 
-    //test
-    //test
     //to be filled in in the future, right now it's just simple constructor for testing.
 
     public Client() {
-        this.hostName = "142.58.15.37";
+        this.hostName = "127.0.0.1";
         this.portNumber = 9991;
     }
 
     public void init() {
-//		String hostName = args[0];
-//		int portNumber = Integer.parseInt(args[1]);
-
 
         int syncIteration = 5; //number of iterations to run in the initial clock synchronization process
         Long currentLatency = new Long(0); //updated by timing PollGameDataCommand
@@ -189,10 +185,6 @@ public class Client {
             } else {
                 ex.printStackTrace();
             }
-//            ex.printStackTrace();
         }
-//		} finally {
-//			System.exit(0);
-//		}
     }
 }

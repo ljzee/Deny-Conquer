@@ -1,7 +1,9 @@
 package main;
 
 import java.io.IOException;
-//tests
+
+//Command line interface for starting the game
+
 public class Starter {
     public static void main(String args[]) throws IOException {
         System.out.println("---  Welcome to Deny and Conquer IGame  ---");

@@ -19,6 +19,8 @@ import game.Model;
 import networking.Client.Client;
 import networking.Shared.ClientInfo;
 
+//Game Server
+
 public class Server {
 
     public ServerSocket socket;
@@ -31,8 +33,7 @@ public class Server {
     ArrayList<Color> unusedColors;
     ArrayList<Color> usedColors;
     ArrayList<ClientInfo> clientInfos;
-    //ArrayList<String> clientAddresses;
-
+    
     ConcurrentLinkedQueue<Command> commandQueue = new ConcurrentLinkedQueue<Command>();
     
     //configurations
@@ -52,11 +53,9 @@ public class Server {
         try {
             this.socket = new ServerSocket(port);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         this.clientInfos = new ArrayList<>(infos);
-//        this.clientAddresses = new ArrayList<String>();
     }
 
     public Server(int port, int penThickness, int numBoxes, double targetPercentage) {
@@ -66,10 +65,9 @@ public class Server {
         try {
             this.socket = new ServerSocket(port);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-//        this.clientAddresses = new ArrayList<String>();
+
         this.clientInfos = new ArrayList<>();
         this.usedColors = new ArrayList<Color>();
         this.unusedColors = new ArrayList<Color>();
@@ -127,7 +125,6 @@ public class Server {
     }
 
     public Color getUnusedColor() {
-//        System.out.println(unusedColors.size() - 1);
         Color color = unusedColors.get(unusedColors.size() - 1);
         unusedColors.remove(unusedColors.size() - 1);
         usedColors.add(color);
@@ -178,10 +175,7 @@ public class Server {
         System.exit(0);
     }
 
-    //    public static void init(String[] args) {
     public void init(Boolean isReconnect) {
-
-//        Server server = new Server(9991);
         this.isReconnect = isReconnect;
         this.acceptConnections(this.NumberOfConnections);
         try {

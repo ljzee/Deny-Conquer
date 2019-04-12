@@ -5,6 +5,8 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+//Contains current model game state as response to PollGameDataCommand
+
 public class PollGameDataCommandResponse implements GameplayCommands {
 	/**
 	 * 

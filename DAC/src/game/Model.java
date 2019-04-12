@@ -30,45 +30,15 @@ import command.ClearCellColorCommand;
 import command.Command;
 import command.PollGameDataCommandResponse;
 import command.ScribbleCellCommand;
-import command.UpdateCellColorCommand;
+
+//Creates the game model, initializes grid and game state
 
 public class Model {
 	
 	private JFrame frame;
 	private Grid grid;
 	private boolean playingState;
-
-
-    public static void main(String[] args) {
-    	  
-    }
-    
-//    public ArrayList<Command> getUpdatedState() {
-//		ArrayList<Command> gameCommands = new ArrayList<Command>();
-//		
-//		Component[] cells = (Component[])grid.getComponents();
-//		
-//		for(Component c : cells) {
-//			CellPane cell = (CellPane)c;
-//			if(!cell.getIsModified()) {
-//				continue;
-//			} else if(cell.getStatus() == 1) {
-////				ScribbleCellCommand command = new ScribbleCellCommand(cell.getLocation().x, cell.getLocation().y, cell.getPoints());
-////				gameCommands.add(command);
-//				cell.setIsModified(false);
-//			} else if(cell.getStatus() == 2) {
-//				UpdateCellColorCommand command = new UpdateCellColorCommand(cell.getLocation().x, cell.getLocation().y);
-//				gameCommands.add(command);
-//				cell.setIsModified(false);
-//			} else if(cell.getStatus() == 3) {
-//				ClearCellColorCommand command = new ClearCellColorCommand(cell.getLocation().x, cell.getLocation().y);
-//				gameCommands.add(command);
-//				cell.setIsModified(false);
-//			}
-//		}
-//		return gameCommands;
-//	}
-//    
+   
     public ArrayList<PollGameDataCommandResponse> pollGameData() {
 		ArrayList<PollGameDataCommandResponse> gameData = new ArrayList<PollGameDataCommandResponse>();
 		
@@ -181,11 +151,7 @@ public class Model {
     	return frame;
     }
     
-    public Grid getGrid() {
-//    	JRootPane rootPane = (JRootPane)t.getFrame().getComponent(0);
-//		JLayeredPane layeredPanel = (JLayeredPane)rootPane.getComponent(1);
-//		JPanel panel = (JPanel)layeredPanel.getComponent(0);
-    	
+    public Grid getGrid() {	
     	return grid;
     }
 

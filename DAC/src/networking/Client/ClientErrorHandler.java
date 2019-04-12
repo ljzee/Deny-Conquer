@@ -13,10 +13,6 @@ import java.util.ArrayList;
 public class ClientErrorHandler {
     public static void handleServerDisc(Client client) {
         String localAddress = String.valueOf(client.echoSocket.getLocalAddress());
-//        if (client.clientAddresses.indexOf(localAddress) == -1){
-//            System.out.println("Server crashed, server side client shuts down");
-//            System.exit(0);
-//        }
         int count = 0;
         int maxTries = 3;
         while (true) {
@@ -74,10 +70,6 @@ public class ClientErrorHandler {
 
     public static void connectToAltServer(Client client) throws Exception {
         String destAddrData = client.clientInfos.get(0).addr;
-//        SocketAddress socketAddr = new InetSocketAddress(destAddrData[0].replace("/", ""),
-//                Integer.valueOf(destAddrData[1])+100);
-
-//            client.echoSocket.connect(socketAddr);
         Socket soc = new Socket(destAddrData.replace("/", ""),
                 12345 + client.clientInfos.size() * 10);
         client.echoSocket.close();
@@ -91,7 +83,6 @@ public class ClientErrorHandler {
         String addr = client.echoSocket.getLocalAddress().toString().replace("/", "");
         int port = 12345 + client.clientInfos.size() * 10;
         client.echoSocket.close();
-//            client.echoSocket.connect(socketAddr);
         System.out.println(addr.toString());
         client.echoSocket = new Socket(addr, port);
         System.out.println("Last client reconnect successfully");

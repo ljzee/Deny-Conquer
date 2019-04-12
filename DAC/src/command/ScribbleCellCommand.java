@@ -22,7 +22,6 @@ public class ScribbleCellCommand implements GameplayCommands {
 	public ScribbleCellCommand(int x, int y, Point point, long timestamp) {
 		this.x = x;
 		this.y = y;
-		//this.points = new ArrayList<Point>(points);
 		this.point = point;
 		this.timestamp = timestamp;
 	}
@@ -57,7 +56,6 @@ public class ScribbleCellCommand implements GameplayCommands {
 	}
 	
 	public void setTimeStamp(long timeStamp) {
-		// TODO Auto-generated method stub
 		this.timestamp = timeStamp;
 	}
 
