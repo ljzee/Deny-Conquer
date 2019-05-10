@@ -2,4 +2,4 @@
 
 #### Configure Game Seetings
 \
-<img src="screenshots/configuration.png" width=200>
+<img src="screenshots/configuration.png" width=500>
