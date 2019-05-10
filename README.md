@@ -1,5 +1,5 @@
 # Deny & Conquer
 
-## Configure Game Seetings
+#### Configure Game Seetings
 \
-![](screenshots/configuration.png)
+<img src="screenshots/configuration.png" width=200>
