@@ -4,14 +4,14 @@
 **_Configure Game Settings_**<br/>
 <img src="screenshots/configuration.png" width=500>
 
-*Game Starting Screens*/
+**_Game Starting Screens_**<br/>
 <img src="screenshots/startingscreen.png" width=500>
 
-*Gameplay (beginning)*/
+**_Gameplay (beginning)_**<br/>
 <img src="screenshots/gamestart.gif" width=500>
 
-*Gameplay (end)*/
+**_Gameplay (end)_**<br/>
 <img src="screenshots/gameend.gif" width=500>
 
-*Results Screen*/
+**_Results Screen_**<br/>
 <img src="screenshots/winningmessage.png" width=500>
