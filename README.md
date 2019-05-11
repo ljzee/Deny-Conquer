@@ -5,3 +5,6 @@
 
 #### Game Starting Screens
 <img src="screenshots/startingscreen.png" width=500>
+
+#### Gameplay (beginning)
+<img src="screenshots/gamestart.gif" width=500>
