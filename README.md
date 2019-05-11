@@ -1,7 +1,7 @@
 # Deny & Conquer
 
 ## Screenshots:
-*_Configure Game Settings_*<br/>
+**_Configure Game Settings_**<br/>
 <img src="screenshots/configuration.png" width=500>
 
 *Game Starting Screens*/
