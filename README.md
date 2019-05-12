@@ -1,5 +1,5 @@
 # Deny & Conquer
-####Introduction
+#### Introduction
 Deny & Conquer is a fun multiplayer game implemented in *Java* used to demonstrate various distributed system topics like coordination and fault tolerance.
 
 In terms of the gaming aspect, the goal of the player is to color more cells than the opponent. Before a game session, the host can configure game settings like coloring width, number of grid cells, and percentage threshold of a cell. Once a player colors the percentage threshold, then the player owns the cell. No two players can color the same cell at the same time. A player cannot color multiple cells at the same time.
